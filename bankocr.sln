@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bankocr", "bankocr\bankocr.csproj", "{04A36572-67B9-47DF-9BB5-76BCCD2D2621}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bankocr.tests", "bankocr.tests\bankocr.tests.csproj", "{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{04A36572-67B9-47DF-9BB5-76BCCD2D2621}.Release|x64.Build.0 = Release|Any CPU
 		{04A36572-67B9-47DF-9BB5-76BCCD2D2621}.Release|x86.ActiveCfg = Release|Any CPU
 		{04A36572-67B9-47DF-9BB5-76BCCD2D2621}.Release|x86.Build.0 = Release|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Debug|x64.Build.0 = Debug|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Debug|x86.Build.0 = Debug|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Release|x64.ActiveCfg = Release|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Release|x64.Build.0 = Release|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
