@@ -21,7 +21,7 @@ namespace BankOcr.Tests
         {
             char expected = data;
 
-            Digit digit = Digit.MaybeNew(data).Value;
+            Digit digit = Digit.MaybeFromChar(data).Value;
             char actual = digit.Value;
 
             Assert.Equal(expected, actual);
@@ -34,9 +34,19 @@ namespace BankOcr.Tests
         {
             // Expect null
 
-            Digit? digit = Digit.MaybeNew(data);
+            Digit? digit = Digit.MaybeFromChar(data);
 
             Assert.Null(digit);
+        }
+
+        [Theory]
+        [InlineData("     |  |", '1')]
+        public void ShouldConvert(string s, char expected)
+        {
+            Digit digit = Digit.MaybeFromString(s).Value;
+            char actual = digit.Value;
+
+            Assert.Equal(expected, actual);
         }
     }
 }

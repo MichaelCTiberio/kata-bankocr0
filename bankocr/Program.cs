@@ -8,7 +8,7 @@ namespace BankOcr
 
         private Digit(char c) => Value = c;
 
-        public static Digit? MaybeNew(char c)
+        public static Digit? MaybeFromChar(char c)
         {
             return c switch
             {
@@ -16,6 +16,15 @@ namespace BankOcr
                 _ => null,
             };
         }
+
+        public static Digit? MaybeFromString(string s)
+        {
+            return s switch
+            {
+                "     |  |" => new Digit('1'),
+                _ => null,
+            };
+        } 
     }
 
     static class Program
