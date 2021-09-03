@@ -1,8 +1,8 @@
 <Project>
 
   <PropertyGroup>
-    <BaseOutputPath>../bld/bin/</BaseOutputPath>
-    <BaseIntermediateOutputPath>../bld/obj/</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)/bld/bin/$(MSBuildProjectName)</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)/bld/obj/$(MSBuildProjectName)</BaseIntermediateOutputPath>
   </PropertyGroup>
 
 </Project>
