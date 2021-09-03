@@ -1,14 +1,42 @@
+using BankOcr;
 using System;
 using Xunit;
 
-namespace bankocr.tests
+namespace BankOcr.Tests
 {
-    public class UnitTest1
+    public class DigitTests
     {
-        [Fact]
-        public void Test1()
+        [Theory]
+        [InlineData('0')]
+        [InlineData('1')]
+        [InlineData('2')]
+        [InlineData('3')]
+        [InlineData('4')]
+        [InlineData('5')]
+        [InlineData('6')]
+        [InlineData('7')]
+        [InlineData('8')]
+        [InlineData('9')]
+        public void ShouldCreateDigits(char data)
         {
+            char expected = data;
 
+            Digit digit = Digit.MaybeNew(data).Value;
+            char actual = digit.Value;
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData('/')]
+        [InlineData(':')]
+        public void ShouldNotCreateNonDigits(char data)
+        {
+            // Expect null
+
+            Digit? digit = Digit.MaybeNew(data);
+
+            Assert.Null(digit);
         }
     }
 }
