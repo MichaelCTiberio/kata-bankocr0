@@ -2,6 +2,20 @@
 
 namespace BankOcr
 {
+    public static class DigitStrings
+    {
+        public const string Zero = " _ | ||_|";
+        public const string One = "     |  |";
+        public const string Two = " _  _||_ ";
+        public const string Three = " _  _| _|";
+        public const string Four = "   |_|  |";
+        public const string Five = " _ |_  _|";
+        public const string Six = " _ |_ |_|";
+        public const string Seven = " _   |  |";
+        public const string Eight = " _ |_||_|";
+        public const string Nine = " _ |_| _|";
+    }
+
     public struct Digit
     {
         public char Value { get; }
@@ -21,16 +35,16 @@ namespace BankOcr
         {
             return s switch
             {
-                " _ | ||_|" => new Digit('0'),
-                "     |  |" => new Digit('1'),
-                " _  _||_ " => new Digit('2'),
-                " _  _| _|" => new Digit('3'),
-                "   |_|  |" => new Digit('4'),
-                " _ |_  _|" => new Digit('5'),
-                " _ |_ |_|" => new Digit('6'),
-                " _   |  |" => new Digit('7'),
-                " _ |_||_|" => new Digit('8'),
-                " _ |_| _|" => new Digit('9'),
+                DigitStrings.Zero => new Digit('0'),
+                DigitStrings.One => new Digit('1'),
+                DigitStrings.Two => new Digit('2'),
+                DigitStrings.Three => new Digit('3'),
+                DigitStrings.Four => new Digit('4'),
+                DigitStrings.Five => new Digit('5'),
+                DigitStrings.Six => new Digit('6'),
+                DigitStrings.Seven => new Digit('7'),
+                DigitStrings.Eight => new Digit('8'),
+                DigitStrings.Nine => new Digit('9'),
                 _ => null,
             };
         } 

@@ -40,16 +40,16 @@ namespace BankOcr.Tests
         }
 
         [Theory]
-        [InlineData(" _ | ||_|", '0')]
-        [InlineData("     |  |", '1')]
-        [InlineData(" _  _||_ ", '2')]
-        [InlineData(" _  _| _|", '3')]
-        [InlineData("   |_|  |", '4')]
-        [InlineData(" _ |_  _|", '5')]
-        [InlineData(" _ |_ |_|", '6')]
-        [InlineData(" _   |  |", '7')]
-        [InlineData(" _ |_||_|", '8')]
-        [InlineData(" _ |_| _|", '9')]
+        [InlineData(DigitStrings.Zero, '0')]
+        [InlineData(DigitStrings.One, '1')]
+        [InlineData(DigitStrings.Two, '2')]
+        [InlineData(DigitStrings.Three, '3')]
+        [InlineData(DigitStrings.Four, '4')]
+        [InlineData(DigitStrings.Five, '5')]
+        [InlineData(DigitStrings.Six, '6')]
+        [InlineData(DigitStrings.Seven, '7')]
+        [InlineData(DigitStrings.Eight, '8')]
+        [InlineData(DigitStrings.Nine, '9')]
         public void ShouldConvert(string s, char expected)
         {
             Digit digit = Digit.MaybeFromString(s).Value;
