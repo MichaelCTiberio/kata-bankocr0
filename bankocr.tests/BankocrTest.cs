@@ -46,6 +46,7 @@ namespace BankOcr.Tests
         [InlineData(" _  _| _|", '3')]
         [InlineData("   |_|  |", '4')]
         [InlineData(" _ |_  _|", '5')]
+        [InlineData(" _ |_ |_|", '6')]
         public void ShouldConvert(string s, char expected)
         {
             Digit digit = Digit.MaybeFromString(s).Value;
