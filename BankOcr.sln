@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bankocr", "bankocr\bankocr.csproj", "{04A36572-67B9-47DF-9BB5-76BCCD2D2621}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOcr", "BankOcr\BankOcr.csproj", "{04A36572-67B9-47DF-9BB5-76BCCD2D2621}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bankocr.tests", "bankocr.tests\bankocr.tests.csproj", "{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOcr.Test", "BankOcr.Test\BankOcr.Test.csproj", "{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
