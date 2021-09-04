@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace BankOcr
 {
@@ -22,14 +22,14 @@ namespace BankOcr
 
         private Digit(char c) => Value = c;
 
-        public static Digit? MaybeFromChar(char c)
-        {
-            return c switch
-            {
-                (>= '0') and (<= '9') => new Digit(c),
-                _ => null,
-            };
-        }
+        // private static Digit? MaybeFromChar(char c)
+        // {
+        //     return c switch
+        //     {
+        //         (>= '0') and (<= '9') => new Digit(c),
+        //         _ => null,
+        //     };
+        // }
 
         public static Digit? MaybeFromString(string s)
         {
