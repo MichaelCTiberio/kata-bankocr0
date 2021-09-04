@@ -24,6 +24,7 @@ namespace BankOcr
                 " _ | ||_|" => new Digit('0'),
                 "     |  |" => new Digit('1'),
                 " _  _||_ " => new Digit('2'),
+                " _  _| _|" => new Digit('3'),
                 _ => null,
             };
         } 
