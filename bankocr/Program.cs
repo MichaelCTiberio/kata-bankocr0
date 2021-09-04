@@ -21,6 +21,7 @@ namespace BankOcr
         {
             return s switch
             {
+                " _ | ||_|" => new Digit('0'),
                 "     |  |" => new Digit('1'),
                 _ => null,
             };

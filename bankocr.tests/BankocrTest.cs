@@ -40,6 +40,7 @@ namespace BankOcr.Tests
         }
 
         [Theory]
+        [InlineData(" _ | ||_|", '0')]
         [InlineData("     |  |", '1')]
         public void ShouldConvert(string s, char expected)
         {
