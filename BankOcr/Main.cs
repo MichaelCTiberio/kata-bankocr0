@@ -1,18 +1,48 @@
-using System;
+﻿using System;
 
 namespace BankOcr
 {
     public static class DigitStrings
     {
+        // " _ "
+        // "| |"
+        // "|_|"
         public const string Zero = " _ | ||_|";
+        // "   "
+        // "  |"
+        // "  |"
         public const string One = "     |  |";
+        // " _ "
+        // " _|"
+        // "|_ "
         public const string Two = " _  _||_ ";
+        // " _ "
+        // " _|"
+        // " _|"
         public const string Three = " _  _| _|";
+        // "   "
+        // "|_|"
+        // "  |"
         public const string Four = "   |_|  |";
+        // " _ "
+        // "|_ "
+        // " _|"
         public const string Five = " _ |_  _|";
+        // " _ "
+        // "|_ "
+        // "|_|"
         public const string Six = " _ |_ |_|";
+        // " _ "
+        // "  |"
+        // "  |"
         public const string Seven = " _   |  |";
+        // " _ "
+        // "|_|"
+        // "|_|"
         public const string Eight = " _ |_||_|";
+        // " _ "
+        // "|_|"
+        // "  |"
         public const string Nine = " _ |_| _|";
     }
 
