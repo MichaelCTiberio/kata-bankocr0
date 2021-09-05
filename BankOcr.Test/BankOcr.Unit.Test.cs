@@ -6,50 +6,17 @@ namespace BankOcr.Tests
 {
     public class DigitTests
     {
-        // [Theory]
-        // [InlineData('0')]
-        // [InlineData('1')]
-        // [InlineData('2')]
-        // [InlineData('3')]
-        // [InlineData('4')]
-        // [InlineData('5')]
-        // [InlineData('6')]
-        // [InlineData('7')]
-        // [InlineData('8')]
-        // [InlineData('9')]
-        // public void ShouldCreateDigits(char data)
-        // {
-        //     char expected = data;
-
-        //     Digit digit = Digit.MaybeFromChar(data).Value;
-        //     char actual = digit.Value;
-
-        //     Assert.Equal(expected, actual);
-        // }
-
-        // [Theory]
-        // [InlineData('/')]
-        // [InlineData(':')]
-        // public void ShouldNotCreateNonDigits(char data)
-        // {
-        //     // Expect null
-
-        //     Digit? digit = Digit.MaybeFromChar(data);
-
-        //     Assert.Null(digit);
-        // }
-
         [Theory]
-        [InlineData(DigitStrings.Zero, '0')]
-        [InlineData(DigitStrings.One, '1')]
-        [InlineData(DigitStrings.Two, '2')]
-        [InlineData(DigitStrings.Three, '3')]
-        [InlineData(DigitStrings.Four, '4')]
-        [InlineData(DigitStrings.Five, '5')]
-        [InlineData(DigitStrings.Six, '6')]
-        [InlineData(DigitStrings.Seven, '7')]
-        [InlineData(DigitStrings.Eight, '8')]
-        [InlineData(DigitStrings.Nine, '9')]
+        [InlineData(Digit.Zero, '0')]
+        [InlineData(Digit.One, '1')]
+        [InlineData(Digit.Two, '2')]
+        [InlineData(Digit.Three, '3')]
+        [InlineData(Digit.Four, '4')]
+        [InlineData(Digit.Five, '5')]
+        [InlineData(Digit.Six, '6')]
+        [InlineData(Digit.Seven, '7')]
+        [InlineData(Digit.Eight, '8')]
+        [InlineData(Digit.Nine, '9')]
         public void ShouldConvert(string s, char expected)
         {
             var maybeDigit = Digit.MaybeFromString(s);
