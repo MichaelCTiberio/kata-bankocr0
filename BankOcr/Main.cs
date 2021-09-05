@@ -14,6 +14,13 @@ namespace BankOcr
 
         public static Roe<T> NewError(string error) =>
             new Roe<T> { Valid = false, Result = default, Error = error };
+
+        public Roe<T> Invoke(Func<T, Roe<T>> f) =>
+            Valid switch
+            {
+                true => f(Result),
+                false => this,
+            };
     }
 
     public static class DigitStrings
@@ -75,9 +82,8 @@ namespace BankOcr
         //     };
         // }
 
-        public static Roe<Digit> MaybeFromString(string s)
-        {
-            return s switch
+        public static Roe<Digit> MaybeFromString(string s) =>
+            s switch
             {
                 DigitStrings.Zero => Roe<Digit>.NewResult(new Digit('0')),
                 DigitStrings.One => Roe<Digit>.NewResult(new Digit('1')),
@@ -91,7 +97,6 @@ namespace BankOcr
                 DigitStrings.Nine => Roe<Digit>.NewResult(new Digit('9')),
                 _ => Roe<Digit>.NewError($"Invalid string \"{s}\""),
             };
-        } 
     }
 
     static class Program
