@@ -2,6 +2,20 @@
 
 namespace BankOcr
 {
+    /// <summary>Result or Error</summary>
+    public struct Roe<T>
+    {
+        public T Result { get; private set; }
+        public string Error { get; private set; }
+        public bool Valid { get; private set; }
+
+        public static Roe<T> NewResult(T result) =>
+            new Roe<T> { Valid = true, Result = result, Error = "" };
+
+        public static Roe<T> NewError(string error) =>
+            new Roe<T> { Valid = false, Result = default, Error = error };
+    }
+
     public static class DigitStrings
     {
         // " _ "
@@ -61,21 +75,21 @@ namespace BankOcr
         //     };
         // }
 
-        public static Digit? MaybeFromString(string s)
+        public static Roe<Digit> MaybeFromString(string s)
         {
             return s switch
             {
-                DigitStrings.Zero => new Digit('0'),
-                DigitStrings.One => new Digit('1'),
-                DigitStrings.Two => new Digit('2'),
-                DigitStrings.Three => new Digit('3'),
-                DigitStrings.Four => new Digit('4'),
-                DigitStrings.Five => new Digit('5'),
-                DigitStrings.Six => new Digit('6'),
-                DigitStrings.Seven => new Digit('7'),
-                DigitStrings.Eight => new Digit('8'),
-                DigitStrings.Nine => new Digit('9'),
-                _ => null,
+                DigitStrings.Zero => Roe<Digit>.NewResult(new Digit('0')),
+                DigitStrings.One => Roe<Digit>.NewResult(new Digit('1')),
+                DigitStrings.Two => Roe<Digit>.NewResult(new Digit('2')),
+                DigitStrings.Three => Roe<Digit>.NewResult(new Digit('3')),
+                DigitStrings.Four => Roe<Digit>.NewResult(new Digit('4')),
+                DigitStrings.Five => Roe<Digit>.NewResult(new Digit('5')),
+                DigitStrings.Six => Roe<Digit>.NewResult(new Digit('6')),
+                DigitStrings.Seven => Roe<Digit>.NewResult(new Digit('7')),
+                DigitStrings.Eight => Roe<Digit>.NewResult(new Digit('8')),
+                DigitStrings.Nine => Roe<Digit>.NewResult(new Digit('9')),
+                _ => Roe<Digit>.NewError($"Invalid string \"{s}\""),
             };
         } 
     }
