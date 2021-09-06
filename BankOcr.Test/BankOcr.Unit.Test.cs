@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace BankOcr.Tests
@@ -31,6 +33,28 @@ namespace BankOcr.Tests
 
             Maybe<Digit> maybeDigit = Digit.FromString(s);
             Assert.False(maybeDigit);
+        }
+    }
+
+    public class FileReaderTests
+    {
+        [Fact]
+        public void ShouldReadLines()
+        {
+            var expected = new List<string>
+            {
+                "This is a bunch",
+                "Of multi line text",
+                "That we can use",
+                "In a test.",
+            };
+
+            string text = string.Join("\n", expected);
+
+            StringReader reader = new StringReader(text);
+            IEnumerable<string> actual = FileReader.Lines(reader);
+
+            Assert.Equal(expected, actual);
         }
     }
 }

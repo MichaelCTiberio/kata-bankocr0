@@ -1,4 +1,5 @@
-using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace BankOcr
 {
@@ -97,11 +98,22 @@ namespace BankOcr
             " _|";
     }
 
+    public static class FileReader
+    {
+        public static IEnumerable<string> Lines(TextReader reader)
+        {
+            string line;
+            while ((line = reader.ReadLine()) != null)
+                yield return line;
+        }
+    }
+
     static class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            // string(filename) -> TextReader(a StreamReader opened to the file)
+            // Lines: TextReader -> IEnumerable<string>(lines from file)
         }
     }
 }
