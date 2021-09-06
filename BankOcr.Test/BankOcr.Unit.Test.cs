@@ -19,10 +19,11 @@ namespace BankOcr.Tests
         [InlineData(Digit.Nine, '9')]
         public void ShouldConvert(string s, char expected)
         {
-            Result<Digit> maybeDigit = Digit.MaybeFromString(s);
-            Assert.True(maybeDigit.Valid);
+            Maybe<Digit> maybeDigit = Digit.FromString(s);
+            Assert.True(maybeDigit);
 
-            char actual = maybeDigit.Value.Value;
+            Digit digit = maybeDigit;
+            char actual = digit.Value;
             Assert.Equal(expected, actual);
         }
 
@@ -30,13 +31,9 @@ namespace BankOcr.Tests
         public void ShouldNotConvert()
         {
             string s = "bad string";
-            string expected = $"Invalid string \"{s}\"";
 
-            Result<Digit> maybeDigit = Digit.MaybeFromString(s);
-            Assert.False(maybeDigit.Valid);
-
-            string actual = maybeDigit.Error;
-            Assert.Equal(expected, actual);
+            Maybe<Digit> maybeDigit = Digit.FromString(s);
+            Assert.False(maybeDigit);
         }
     }
 }

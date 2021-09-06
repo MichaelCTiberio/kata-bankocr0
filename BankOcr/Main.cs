@@ -14,7 +14,8 @@ namespace BankOcr
         public static Result<T> NewError(string error) =>
             new Result<T> { Valid = false, Value = default, Error = error };
 
-        public Result<T> Invoke(Func<T, Result<T>> f) => (Valid ? f(Value) : this); 
+        public Result<T> Invoke(Func<T, Result<T>> f) => (Valid ? f(Value) : this);
+
     }
 
     public struct Maybe<T>
@@ -22,30 +23,33 @@ namespace BankOcr
         private T Value { get; set; }
         private bool HasValue { get; set; }
 
+        public static Maybe<T> None = new Maybe<T>();
+
         public static implicit operator Maybe<T>(T value) =>
             new Maybe<T> { Value = value, HasValue = (value != null) };
 
-        public static Maybe<T> None = new Maybe<T>();
+        public static implicit operator bool(Maybe<T> maybe) => maybe.HasValue;
+        public static implicit operator T(Maybe<T> maybe) => maybe.Value;
     }
 
     public struct Digit
     {
         public char Value { get; private set; }
 
-        public static Result<Digit> MaybeFromString(string s) =>
+        public static Maybe<Digit> FromString(string s) =>
             s switch
             {
-                Zero => Result<Digit>.NewResult(new Digit { Value = '0' }),
-                One => Result<Digit>.NewResult(new Digit { Value = '1' }),
-                Two => Result<Digit>.NewResult(new Digit { Value = '2' }),
-                Three => Result<Digit>.NewResult(new Digit { Value = '3' }),
-                Four => Result<Digit>.NewResult(new Digit { Value = '4' }),
-                Five => Result<Digit>.NewResult(new Digit { Value = '5' }),
-                Six => Result<Digit>.NewResult(new Digit { Value = '6' }),
-                Seven => Result<Digit>.NewResult(new Digit { Value = '7' }),
-                Eight => Result<Digit>.NewResult(new Digit { Value = '8' }),
-                Nine => Result<Digit>.NewResult(new Digit { Value = '9' }),
-                _ => Result<Digit>.NewError($"Invalid string \"{s}\""),
+                Zero => new Digit { Value = '0' },
+                One => new Digit { Value = '1' },
+                Two => new Digit { Value = '2' },
+                Three => new Digit { Value = '3' },
+                Four => new Digit { Value = '4' },
+                Five => new Digit { Value = '5' },
+                Six => new Digit { Value = '6' },
+                Seven => new Digit { Value = '7' },
+                Eight => new Digit { Value = '8' },
+                Nine => new Digit { Value = '9' },
+                _ => Maybe<Digit>.None,
             };
 
         public const string Zero =
