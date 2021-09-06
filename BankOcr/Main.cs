@@ -1,21 +1,23 @@
-﻿using System;
+using System;
 
 namespace BankOcr
 {
-    public struct Result<T>
+    public struct Result<T, TError>
     {
-        public T Value { get; private set; }
-        public string Error { get; private set; }
-        public bool Valid { get; private set; }
+        private T value;
+        public static explicit operator T(Result<T, TError> result) => result.value;
 
-        public static Result<T> NewResult(T result) =>
-            new Result<T> { Valid = true, Value = result, Error = default };
+        private TError error;
+        public static explicit operator TError(Result<T, TError> result) => result.error;
 
-        public static Result<T> NewError(string error) =>
-            new Result<T> { Valid = false, Value = default, Error = error };
+        private bool success;
+        public static implicit operator bool(Result<T, TError> result) => result.success;
 
-        public Result<T> Invoke(Func<T, Result<T>> f) => (Valid ? f(Value) : this);
+        public static implicit operator Result<T, TError>(T value) =>
+            new Result<T, TError> { value = value, error = default, success = true };
 
+        public static implicit operator Result<T, TError>(TError error) =>
+            new Result<T, TError> { value = default, error = error, success = false };
     }
 
     public struct Maybe<T>
