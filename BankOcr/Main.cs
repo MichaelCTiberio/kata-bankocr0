@@ -2,40 +2,39 @@
 
 namespace BankOcr
 {
-    /// <summary>Result or Error</summary>
-    public struct Roe<T>
+    public struct Result<T>
     {
-        public T Result { get; private set; }
+        public T Value { get; private set; }
         public string Error { get; private set; }
         public bool Valid { get; private set; }
 
-        public static Roe<T> NewResult(T result) =>
-            new Roe<T> { Valid = true, Result = result, Error = default };
+        public static Result<T> NewResult(T result) =>
+            new Result<T> { Valid = true, Value = result, Error = default };
 
-        public static Roe<T> NewError(string error) =>
-            new Roe<T> { Valid = false, Result = default, Error = error };
+        public static Result<T> NewError(string error) =>
+            new Result<T> { Valid = false, Value = default, Error = error };
 
-        public Roe<T> Invoke(Func<T, Roe<T>> f) => (Valid ? f(Result) : this); 
+        public Result<T> Invoke(Func<T, Result<T>> f) => (Valid ? f(Value) : this); 
     }
 
     public struct Digit
     {
         public char Value { get; private set; }
 
-        public static Roe<Digit> MaybeFromString(string s) =>
+        public static Result<Digit> MaybeFromString(string s) =>
             s switch
             {
-                Zero => Roe<Digit>.NewResult(new Digit { Value = '0' }),
-                One => Roe<Digit>.NewResult(new Digit { Value = '1' }),
-                Two => Roe<Digit>.NewResult(new Digit { Value = '2' }),
-                Three => Roe<Digit>.NewResult(new Digit { Value = '3' }),
-                Four => Roe<Digit>.NewResult(new Digit { Value = '4' }),
-                Five => Roe<Digit>.NewResult(new Digit { Value = '5' }),
-                Six => Roe<Digit>.NewResult(new Digit { Value = '6' }),
-                Seven => Roe<Digit>.NewResult(new Digit { Value = '7' }),
-                Eight => Roe<Digit>.NewResult(new Digit { Value = '8' }),
-                Nine => Roe<Digit>.NewResult(new Digit { Value = '9' }),
-                _ => Roe<Digit>.NewError($"Invalid string \"{s}\""),
+                Zero => Result<Digit>.NewResult(new Digit { Value = '0' }),
+                One => Result<Digit>.NewResult(new Digit { Value = '1' }),
+                Two => Result<Digit>.NewResult(new Digit { Value = '2' }),
+                Three => Result<Digit>.NewResult(new Digit { Value = '3' }),
+                Four => Result<Digit>.NewResult(new Digit { Value = '4' }),
+                Five => Result<Digit>.NewResult(new Digit { Value = '5' }),
+                Six => Result<Digit>.NewResult(new Digit { Value = '6' }),
+                Seven => Result<Digit>.NewResult(new Digit { Value = '7' }),
+                Eight => Result<Digit>.NewResult(new Digit { Value = '8' }),
+                Nine => Result<Digit>.NewResult(new Digit { Value = '9' }),
+                _ => Result<Digit>.NewError($"Invalid string \"{s}\""),
             };
 
         public const string Zero =
