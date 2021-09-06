@@ -17,6 +17,17 @@ namespace BankOcr
         public Result<T> Invoke(Func<T, Result<T>> f) => (Valid ? f(Value) : this); 
     }
 
+    public struct Maybe<T>
+    {
+        private T Value { get; set; }
+        private bool HasValue { get; set; }
+
+        public static implicit operator Maybe<T>(T value) =>
+            new Maybe<T> { Value = value, HasValue = (value != null) };
+
+        public static Maybe<T> None = new Maybe<T>();
+    }
+
     public struct Digit
     {
         public char Value { get; private set; }
