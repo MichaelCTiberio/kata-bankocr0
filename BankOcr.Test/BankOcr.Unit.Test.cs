@@ -1,5 +1,3 @@
-using BankOcr;
-using System;
 using Xunit;
 
 namespace BankOcr.Tests
@@ -22,8 +20,7 @@ namespace BankOcr.Tests
             Maybe<Digit> maybeDigit = Digit.FromString(s);
             Assert.True(maybeDigit);
 
-            Digit digit = maybeDigit;
-            char actual = digit.Value;
+            char actual = (Digit) maybeDigit;
             Assert.Equal(expected, actual);
         }
 

@@ -20,35 +20,36 @@ namespace BankOcr
 
     public struct Maybe<T>
     {
-        private T Value { get; set; }
-        private bool HasValue { get; set; }
+        private T value;
+        public static explicit operator T(Maybe<T> maybe) => maybe.value;
 
-        public static Maybe<T> None = new Maybe<T>();
+        private bool hasValue;
+        public static implicit operator bool(Maybe<T> maybe) => maybe.hasValue;
 
         public static implicit operator Maybe<T>(T value) =>
-            new Maybe<T> { Value = value, HasValue = (value != null) };
+            new Maybe<T> { value = value, hasValue = (value != null) };
 
-        public static implicit operator bool(Maybe<T> maybe) => maybe.HasValue;
-        public static implicit operator T(Maybe<T> maybe) => maybe.Value;
+        public static Maybe<T> None { get; } = new Maybe<T>();
     }
 
     public struct Digit
     {
-        public char Value { get; private set; }
+        private char value;
+        public static implicit operator char(Digit digit) => digit.value;
 
         public static Maybe<Digit> FromString(string s) =>
             s switch
             {
-                Zero => new Digit { Value = '0' },
-                One => new Digit { Value = '1' },
-                Two => new Digit { Value = '2' },
-                Three => new Digit { Value = '3' },
-                Four => new Digit { Value = '4' },
-                Five => new Digit { Value = '5' },
-                Six => new Digit { Value = '6' },
-                Seven => new Digit { Value = '7' },
-                Eight => new Digit { Value = '8' },
-                Nine => new Digit { Value = '9' },
+                Zero => new Digit { value = '0' },
+                One => new Digit { value = '1' },
+                Two => new Digit { value = '2' },
+                Three => new Digit { value = '3' },
+                Four => new Digit { value = '4' },
+                Five => new Digit { value = '5' },
+                Six => new Digit { value = '6' },
+                Seven => new Digit { value = '7' },
+                Eight => new Digit { value = '8' },
+                Nine => new Digit { value = '9' },
                 _ => Maybe<Digit>.None,
             };
 
