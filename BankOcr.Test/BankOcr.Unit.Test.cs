@@ -39,7 +39,7 @@ namespace BankOcr.Tests
     public class FileReaderTests
     {
         [Fact]
-        public void ShouldReadLines()
+        public void ShouldEnumerateLines()
         {
             var expected = new List<string>
             {
@@ -52,7 +52,7 @@ namespace BankOcr.Tests
             string text = string.Join("\n", expected);
 
             StringReader reader = new StringReader(text);
-            IEnumerable<string> actual = FileReader.Lines(reader);
+            IEnumerable<string> actual = FileReader.Lines(reader).Value;
 
             Assert.Equal(expected, actual);
         }

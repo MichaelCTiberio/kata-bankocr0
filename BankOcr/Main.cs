@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -5,20 +6,34 @@ namespace BankOcr
 {
     public struct Result<T, TError>
     {
-        private T value;
-        public static explicit operator T(Result<T, TError> result) => result.value;
+        public T Value { get; private set; }
+        public TError Error { get; private set; }
 
-        private TError error;
-        public static explicit operator TError(Result<T, TError> result) => result.error;
+        public bool Success { get; private set; }
+        public static implicit operator bool(Result<T, TError> result) => result.Success;
 
-        private bool success;
-        public static implicit operator bool(Result<T, TError> result) => result.success;
+        public static implicit operator Result<T, TError>(T value) => Result<T, TError>.Wrap(value);
+        public static Result<T, TError> Wrap(T value) =>
+            new Result<T, TError> { Value = value, Error = default, Success = true };
 
-        public static implicit operator Result<T, TError>(T value) =>
-            new Result<T, TError> { value = value, error = default, success = true };
+        public static implicit operator Result<T, TError>(TError error) => Result<T, TError>.Wrap(error);
+        public static Result<T, TError> Wrap(TError error) =>
+            new Result<T, TError> { Value = default, Error = error, Success = false };
 
-        public static implicit operator Result<T, TError>(TError error) =>
-            new Result<T, TError> { value = default, error = error, success = false };
+        public static explicit operator Maybe<T>(Result<T, TError> result) =>
+            (result.Success ? result.Value : Maybe<T>.None);
+
+        public static Result<T, Exception> Catch(Func<T> f)
+        {
+            try
+            {
+                return f();
+            }
+            catch (Exception e)
+            {
+                return e;
+            }
+        }
     }
 
     public struct Maybe<T>
@@ -102,12 +117,16 @@ namespace BankOcr
 
     public static class FileReader
     {
-        public static IEnumerable<string> Lines(TextReader reader)
+        private static IEnumerable<string> LinesEnumerable(TextReader reader)
         {
             string line;
             while ((line = reader.ReadLine()) != null)
                 yield return line;
         }
+
+        public static Maybe<IEnumerable<string>> Lines(TextReader reader) =>
+            (Maybe<IEnumerable<string>>)
+                Result<IEnumerable<string>, Exception>.Catch(() => LinesEnumerable(reader));
     }
 
     static class Program
@@ -115,7 +134,7 @@ namespace BankOcr
         static void Main(string[] args)
         {
             // string(filename) -> TextReader(a StreamReader opened to the file)
-            // Lines: TextReader -> IEnumerable<string>(lines from file)
+            // Lines: TextReader -> Result<IEnumerable<string>, Exception>(lines from file)
         }
     }
 }
