@@ -23,16 +23,18 @@ namespace BankOcr
 
     public struct Maybe<T>
     {
-        private T value;
-        public static explicit operator T(Maybe<T> maybe) => maybe.value;
+        public T Value { get; private set; }
+        public static explicit operator T(Maybe<T> maybe) => maybe.Value;
 
-        private bool hasValue;
-        public static implicit operator bool(Maybe<T> maybe) => maybe.hasValue;
+        public bool HasValue { get; private set; }
+        public static implicit operator bool(Maybe<T> maybe) => maybe.HasValue;
 
-        public static implicit operator Maybe<T>(T value) =>
-            new Maybe<T> { value = value, hasValue = (value != null) };
+        public static implicit operator Maybe<T>(T value) => Maybe<T>.Wrap(value);
+        public static Maybe<T> Wrap(T value) =>
+            new Maybe<T> { Value = value, HasValue = (value != null) };
 
-        public static Maybe<T> None { get; } = new Maybe<T>();
+        public static Maybe<T> None { get; } =
+            new Maybe<T> { Value = default, HasValue = false };
     }
 
     public struct Digit
