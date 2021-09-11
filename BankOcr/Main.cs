@@ -129,6 +129,18 @@ namespace BankOcr
                 Result<IEnumerable<string>, Exception>.Catch(() => LinesEnumerable(reader));
     }
 
+    public static class Utility
+    {
+        static public Maybe<T> MaybeIs<T>(this object obj)
+        {
+            if (obj is T output)
+                return output;
+
+            return Maybe<T>.None;
+        }
+
+    }
+
     static class Program
     {
         static void Main(string[] args)

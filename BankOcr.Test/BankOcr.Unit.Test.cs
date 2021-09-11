@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
@@ -55,6 +56,29 @@ namespace BankOcr.Tests
             IEnumerable<string> actual = FileReader.Lines(reader).Value;
 
             Assert.Equal(expected, actual);
+        }
+    }
+
+    public class UtilityTests
+    {
+        [Fact]
+        public void TypeIs()
+        {
+            Exception ex = new NullReferenceException();
+
+            var maybe = ex.MaybeIs<NullReferenceException>();
+
+            Assert.True(maybe.HasValue);
+        }
+
+        [Fact]
+        public void TypeIsNot()
+        {
+            Exception ex = new NullReferenceException();
+
+            var maybe = ex.MaybeIs<string>();
+
+            Assert.False(maybe.HasValue);
         }
     }
 }
