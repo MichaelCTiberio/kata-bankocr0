@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace BankOcr
 {
@@ -139,14 +140,66 @@ namespace BankOcr
             return Maybe<T>.None;
         }
 
+        public static Maybe<T> Try<T>(Func<Maybe<T>> f, IEnumerable<Func<Exception, bool>> handlers)
+        {
+            Maybe<T> ret = Maybe<T>.None;
+
+            try
+            {
+                 ret = f();
+            }
+            catch (Exception ex)
+            {
+                if (!handlers.Any((handler) => handler(ex)))
+                    throw;
+            }
+
+            return ret;
+        }
+
+        public static Maybe<T> Try<T>(Func<Maybe<T>> f, params Func<Exception, bool> [] handlers) =>
+            Try(f, (IEnumerable<Func<Exception, bool>>) handlers);
+
+        public static Func<Exception, bool> Handler<TEx>(Func<TEx, bool> handler) where TEx : Exception =>
+            (Exception ex) =>
+            {
+                bool ret = false;
+
+                var maybeTex = ex.MaybeIs<TEx>();
+
+                if (ex is TEx exception)
+                    ret = handler(exception);
+
+                return ret;
+            };
     }
 
-    static class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        private static void WriteOutputLine(string text) => Console.WriteLine(text);
+
+        private static bool HandleNoFilename(IndexOutOfRangeException ex)
+        {
+            WriteOutputLine("ERROR: No file name given.");
+            return true;
+        }
+
+        public static Maybe<string> FilenameFromArgs(string[] args, Func<IndexOutOfRangeException, bool> handler) =>
+            Utility.Try<string>(
+                () => args[0],
+                Utility.Handler<IndexOutOfRangeException>(handler)
+            );
+
+        public static void Main(string[] args)
         {
             // string(filename) -> TextReader(a StreamReader opened to the file)
             // Lines: TextReader -> Result<IEnumerable<string>, Exception>(lines from file)
+
+            var filename = FilenameFromArgs(args, HandleNoFilename);
+
+            if (filename)
+                WriteOutputLine($"File name: {(string) filename}");
+
         }
     }
 }

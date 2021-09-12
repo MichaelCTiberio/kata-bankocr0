@@ -80,5 +80,108 @@ namespace BankOcr.Tests
 
             Assert.False(noEx.HasValue);
         }
+
+        [Fact]
+        public void TryNoException()
+        {
+            string expected = "no exception";
+
+            Func<Maybe<string>> noThrow = () => expected;
+            Func<Exception, bool> handlerThrowsInvalidOperation = (ex) => throw new InvalidOperationException("should not get here");
+
+            Maybe<string> hasString = Utility.Try(
+                noThrow,
+                Utility.Handler(handlerThrowsInvalidOperation)
+            );
+
+            Assert.True(hasString.HasValue);
+
+            string actual = hasString.Value;
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TryExceptionCaught()
+        {
+            Func<Maybe<string>> throwNotImplemented = () => throw new NotImplementedException("should have been caught");
+            Func<NotImplementedException, bool> handleNotImplementedException = (ex) => true;
+
+            Maybe<string> noString = Utility.Try(throwNotImplemented, Utility.Handler(handleNotImplementedException));
+
+            Assert.False(noString.HasValue);
+        }
+
+        [Fact]
+        public void TryExceptionNotCaught()
+        {
+            Func<Maybe<string>> throwInvalidOperation = () => throw new InvalidOperationException("should not have been caught");
+            Func<NotImplementedException, bool> handleNotImplementedException = (ex) => true;
+
+            Action test = () => Utility.Try(throwInvalidOperation, Utility.Handler(handleNotImplementedException));
+
+            Assert.Throws<InvalidOperationException>(test);
+        }
+
+        [Fact]
+        public void TryExceptionCaughtWithFirstHandler()
+        {
+            Func<Maybe<string>> throwNotImplemented = () => throw new NotImplementedException("should have been caught");
+            Func<NotImplementedException, bool> handleNotImplementedException = (ex) => true;
+            Func<Exception, bool> handlerThrowsInvalidOperation = (ex) => throw new InvalidOperationException("should not get here");
+
+            Maybe<string> noString = Utility.Try(
+                throwNotImplemented,
+                Utility.Handler(handleNotImplementedException),
+                Utility.Handler(handlerThrowsInvalidOperation)
+            );
+
+            Assert.False(noString.HasValue);
+        }
+
+
+        [Fact]
+        public void TryExceptionCaughtWithLastHandler()
+        {
+            bool runButNotHandled = false;
+
+            Func<Maybe<string>> throwNotImplemented = () => throw new NotImplementedException("should have been caught");
+            Func<Exception, bool> doesNotHandleException = (ex) => { runButNotHandled = true; return false; };
+            Func<NotImplementedException, bool> handleNotImplementedException = (ex) => true;
+
+            Maybe<string> noString = Utility.Try(
+                throwNotImplemented,
+                Utility.Handler<NotImplementedException>(doesNotHandleException),
+                Utility.Handler<NotImplementedException>(handleNotImplementedException)
+            );
+
+            Assert.True(runButNotHandled);
+            Assert.False(noString.HasValue);
+        }
+    }
+
+    public class ProgramTests
+    {
+        [Fact]
+        public void FilenameFromArgsShouldSucceed()
+        {
+            string expected = "file path";
+            Func<IndexOutOfRangeException, bool> handler =
+                Utility.Handler<IndexOutOfRangeException>(
+                    (ex) => throw new InvalidOperationException("Could not find file name."));
+
+            var hasFilename = Program.FilenameFromArgs(new [] { expected }, handler);
+
+            Assert.True(hasFilename.HasValue);
+            string actual = hasFilename.Value;
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void FilenameFromArgsShouldFail()
+        {
+            Func<IndexOutOfRangeException, bool> noHandler = (ex) => false;
+
+            Assert.Throws<IndexOutOfRangeException>(() => Program.FilenameFromArgs(new string[] { }, noHandler));
+        }
     }
 }
