@@ -20,10 +20,10 @@ namespace BankOcr.Tests
         [InlineData(Digit.Nine, '9')]
         public void ShouldConvert(string s, char expected)
         {
-            Maybe<Digit> maybeDigit = Digit.FromString(s);
-            Assert.True(maybeDigit);
+            Maybe<Digit> hasDigit = Digit.FromString(s);
+            Assert.True(hasDigit);
 
-            char actual = (Digit) maybeDigit;
+            char actual = hasDigit.Value;
             Assert.Equal(expected, actual);
         }
 
@@ -32,8 +32,8 @@ namespace BankOcr.Tests
         {
             string s = "bad string";
 
-            Maybe<Digit> maybeDigit = Digit.FromString(s);
-            Assert.False(maybeDigit);
+            Maybe<Digit> noDigit = Digit.FromString(s);
+            Assert.False(noDigit.HasValue);
         }
     }
 
@@ -66,9 +66,9 @@ namespace BankOcr.Tests
         {
             Exception ex = new NullReferenceException();
 
-            var maybe = ex.MaybeIs<NullReferenceException>();
+            var hasEx = ex.MaybeIs<NullReferenceException>();
 
-            Assert.True(maybe.HasValue);
+            Assert.True(hasEx.HasValue);
         }
 
         [Fact]
@@ -76,9 +76,9 @@ namespace BankOcr.Tests
         {
             Exception ex = new NullReferenceException();
 
-            var maybe = ex.MaybeIs<string>();
+            var noEx = ex.MaybeIs<string>();
 
-            Assert.False(maybe.HasValue);
+            Assert.False(noEx.HasValue);
         }
     }
 }
