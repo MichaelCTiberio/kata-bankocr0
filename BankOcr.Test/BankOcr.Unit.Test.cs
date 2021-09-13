@@ -184,19 +184,17 @@ namespace BankOcr.Tests
         [Fact]
         public void UseShouldOpenAndDisposeObject()
         {
-            string expected = "result string";
+            string expected = "test string";
             bool isDisposed = false;
-            bool didRun = false;
 
-            var hasString = Utility.Use(
+            var hasTestString = Utility.Use(
                 new TestDisposable(expected, () => isDisposed = true),
-                (resource) => { didRun = true; return resource.TestString; }
+                (resource) => resource.TestString
             );
 
-            Assert.True(didRun);
             Assert.True(isDisposed);
-            Assert.True(hasString.HasValue);
-            string actual = hasString.Value;
+            Assert.True(hasTestString.HasValue);
+            string actual = hasTestString.Value;
             Assert.Equal(expected, actual);
         }
     }
