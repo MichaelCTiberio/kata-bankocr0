@@ -160,8 +160,14 @@ namespace BankOcr.Tests
 
         private sealed class TestDisposable : IDisposable
         {
+            public string TestString { get; init; }
             private readonly Action notifier;
-            public TestDisposable(Action notifier) => this.notifier = notifier;
+
+            public TestDisposable(string testString, Action notifier)
+            {
+                this.TestString = testString;
+                this.notifier = notifier;
+            }
 
             private bool disposedValue = false;
             void IDisposable.Dispose()
@@ -183,8 +189,8 @@ namespace BankOcr.Tests
             bool didRun = false;
 
             var hasString = Utility.Use(
-                new TestDisposable(() => isDisposed = true),
-                (_) => { didRun = true; return expected; }
+                new TestDisposable(expected, () => isDisposed = true),
+                (resource) => { didRun = true; return resource.TestString; }
             );
 
             Assert.True(didRun);
