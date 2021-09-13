@@ -42,7 +42,7 @@ namespace BankOcr.Tests
         [Fact]
         public void ShouldEnumerateLines()
         {
-            var expected = new List<string>
+            List<string> expected = new ()
             {
                 "This is a bunch",
                 "Of multi line text",
@@ -52,7 +52,7 @@ namespace BankOcr.Tests
 
             string text = string.Join("\n", expected);
 
-            StringReader reader = new StringReader(text);
+            StringReader reader = new (text);
             IEnumerable<string> actual = FileReader.Lines(reader).Value;
 
             Assert.Equal(expected, actual);
@@ -76,7 +76,7 @@ namespace BankOcr.Tests
         {
             Exception ex = new NullReferenceException();
 
-            var noEx = ex.MaybeIs<string>();
+            var noEx = ex.MaybeIs<InvalidOperationException>();
 
             Assert.False(noEx.HasValue);
         }

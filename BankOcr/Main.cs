@@ -5,21 +5,21 @@ using System.Linq;
 
 namespace BankOcr
 {
-    public struct Result<T, TError>
+    public readonly struct Result<T, TError>
     {
-        public T Value { get; private set; }
-        public TError Error { get; private set; }
+        public T Value { readonly get; init; }
+        public TError Error { readonly get; init; }
 
-        public bool Success { get; private set; }
+        public bool Success { readonly get; init; }
         public static implicit operator bool(Result<T, TError> result) => result.Success;
 
         public static implicit operator Result<T, TError>(T value) => Result<T, TError>.Wrap(value);
         public static Result<T, TError> Wrap(T value) =>
-            new Result<T, TError> { Value = value, Error = default, Success = true };
+            new () { Value = value, Error = default, Success = true };
 
         public static implicit operator Result<T, TError>(TError error) => Result<T, TError>.Wrap(error);
         public static Result<T, TError> Wrap(TError error) =>
-            new Result<T, TError> { Value = default, Error = error, Success = false };
+            new () { Value = default, Error = error, Success = false };
 
         public static explicit operator Maybe<T>(Result<T, TError> result) =>
             (result.Success ? result.Value : Maybe<T>.None);
@@ -37,40 +37,40 @@ namespace BankOcr
         }
     }
 
-    public struct Maybe<T>
+    public readonly struct Maybe<T>
     {
-        public T Value { get; private set; }
+        public T Value { readonly get; init; }
         public static explicit operator T(Maybe<T> maybe) => maybe.Value;
 
-        public bool HasValue { get; private set; }
+        public bool HasValue { readonly get; init; }
         public static implicit operator bool(Maybe<T> maybe) => maybe.HasValue;
 
         public static implicit operator Maybe<T>(T value) => Maybe<T>.Wrap(value);
-        public static Maybe<T> Wrap(T value) =>
-            new Maybe<T> { Value = value, HasValue = (value != null) };
+        public static Maybe<T> Wrap(T value) => new () { Value = value, HasValue = (value != null) };
 
-        public static Maybe<T> None { get; } =
-            new Maybe<T> { Value = default, HasValue = false };
+        public static Maybe<T> None { get; } = new () { Value = default, HasValue = false };
     }
 
-    public struct Digit
+    public readonly struct Digit
     {
-        private char value;
+        private readonly char value;
         public static implicit operator char(Digit digit) => digit.value;
+
+        private Digit(char value) => this.value = value;
 
         public static Maybe<Digit> FromString(string s) =>
             s switch
             {
-                Zero => new Digit { value = '0' },
-                One => new Digit { value = '1' },
-                Two => new Digit { value = '2' },
-                Three => new Digit { value = '3' },
-                Four => new Digit { value = '4' },
-                Five => new Digit { value = '5' },
-                Six => new Digit { value = '6' },
-                Seven => new Digit { value = '7' },
-                Eight => new Digit { value = '8' },
-                Nine => new Digit { value = '9' },
+                Zero => new Digit('0'),
+                One => new Digit('1'),
+                Two => new Digit('2'),
+                Three => new Digit('3'),
+                Four => new Digit('4'),
+                Five => new Digit('5'),
+                Six => new Digit('6'),
+                Seven => new Digit('7'),
+                Eight => new Digit('8'),
+                Nine => new Digit('9'),
                 _ => Maybe<Digit>.None,
             };
 
@@ -132,7 +132,7 @@ namespace BankOcr
 
     public static class Utility
     {
-        static public Maybe<T> MaybeIs<T>(this object obj)
+        public static Maybe<T> MaybeIs<T>(this object obj)
         {
             if (obj is T output)
                 return output;
