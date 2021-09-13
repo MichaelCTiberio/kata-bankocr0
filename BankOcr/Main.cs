@@ -161,16 +161,12 @@ namespace BankOcr
             Try(f, (IEnumerable<Func<Exception, bool>>) handlers);
 
         public static Func<Exception, bool> Handler<TEx>(Func<TEx, bool> handler) where TEx : Exception =>
-            (Exception ex) =>
+            (Exception exception) =>
             {
-                bool ret = false;
-
-                var maybeTex = ex.MaybeIs<TEx>();
-
-                if (ex is TEx exception)
-                    ret = handler(exception);
-
-                return ret;
+                var maybeTEx = exception.MaybeIs<TEx>();
+                return maybeTEx ?
+                    handler((TEx) maybeTEx) :
+                    false;
             };
     }
 
@@ -195,10 +191,10 @@ namespace BankOcr
             // string(filename) -> TextReader(a StreamReader opened to the file)
             // Lines: TextReader -> Result<IEnumerable<string>, Exception>(lines from file)
 
-            var filename = FilenameFromArgs(args, HandleNoFilename);
+            var maybeFilename = FilenameFromArgs(args, HandleNoFilename);
 
-            if (filename)
-                WriteOutputLine($"File name: {(string) filename}");
+            if (maybeFilename)
+                WriteOutputLine($"File name: {(string) maybeFilename}");
 
         }
     }
