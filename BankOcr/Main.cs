@@ -160,12 +160,13 @@ namespace BankOcr
         public static Maybe<T> Try<T>(Func<Maybe<T>> f, params Func<Exception, bool> [] handlers) =>
             Try(f, (IEnumerable<Func<Exception, bool>>) handlers);
 
-        public static Func<Exception, bool> Handler<TEx>(Func<TEx, bool> handler) where TEx : Exception =>
+        public static Func<Exception, bool> Handler<TException>(Func<TException, bool> handler)
+            where TException : Exception =>
             (Exception exception) =>
             {
-                var maybeTEx = exception.MaybeIs<TEx>();
-                return maybeTEx ?
-                    handler((TEx) maybeTEx) :
+                var maybeException = exception.MaybeIs<TException>();
+                return maybeException ?
+                    handler((TException) maybeException) :
                     false;
             };
     }
