@@ -169,6 +169,13 @@ namespace BankOcr
                     handler((TException) maybeException) :
                     false;
             };
+
+        public static Maybe<T> Use<TDisposable, T>(TDisposable disposable, Func<TDisposable, T> f)
+            where TDisposable : IDisposable
+        {
+            using TDisposable resource = disposable;
+            return f(resource);
+        }
     }
 
     public static class Program

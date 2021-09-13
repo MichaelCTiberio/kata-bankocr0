@@ -157,6 +157,42 @@ namespace BankOcr.Tests
             Assert.True(runButNotHandled);
             Assert.False(noString.HasValue);
         }
+
+        private sealed class TestDisposable : IDisposable
+        {
+            private readonly Action notifier;
+            public TestDisposable(Action notifier) => this.notifier = notifier;
+
+            private bool disposedValue = false;
+            void IDisposable.Dispose()
+            {
+                if (!disposedValue)
+                {
+                    notifier();
+                    disposedValue = true;
+                }
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        [Fact]
+        public void UseShouldOpenAndDisposeObject()
+        {
+            string expected = "result string";
+            bool isDisposed = false;
+            bool didRun = false;
+
+            var hasString = Utility.Use(
+                new TestDisposable(() => isDisposed = true),
+                (_) => { didRun = true; return expected; }
+            );
+
+            Assert.True(didRun);
+            Assert.True(isDisposed);
+            Assert.True(hasString.HasValue);
+            string actual = hasString.Value;
+            Assert.Equal(expected, actual);
+        }
     }
 
     public class ProgramTests
