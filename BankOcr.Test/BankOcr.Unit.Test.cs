@@ -252,6 +252,14 @@ namespace BankOcr.Tests
     public static class TestLib
     {
         private static bool MaybeHasValue<T>(Maybe<T> maybe) => maybe.HasValue;
+        private static string Top(this Digit d) => d.Top;
+        private static string Middle(this Digit d) => d.Middle;
+        private static string Bottom(this Digit d) => d.Bottom;
+
+        private static string Concat(this IEnumerable<string> strings, char delimiter) =>
+            (new StringBuilder())
+                .AppendJoin(delimiter, strings)
+                .ToString();
 
         private static Maybe<IEnumerable<T>> MaybeEnumerable<T>(this IEnumerable<Maybe<T>> maybes)
         {
@@ -268,36 +276,33 @@ namespace BankOcr.Tests
             }
         }
 
-        private static Maybe<IEnumerable<Digit>> FromAccountNumber(string accountNumber) =>
-            accountNumber.AsEnumerable().Select(Digit.FromChar).MaybeEnumerable();
+        private static Maybe<IEnumerable<Digit>> ToDigits(this string accountNumber) =>
+            accountNumber
+                .AsEnumerable()
+                .Select(Digit.FromChar)
+                .MaybeEnumerable();
+
+        private const char Delimiter = '+';
 
         public static Maybe<IEnumerable<string>> AccountLinesFromAccountNumber(string accountNumber)
         {
-            LinkedList<string> top = new ();
-            LinkedList<string> middle = new ();
-            LinkedList<string> bottom = new ();
-
-            var maybeDigits = FromAccountNumber(accountNumber);
+            var maybeDigits = accountNumber.ToDigits();
 
             if (!maybeDigits) return Maybe<IEnumerable<string>>.None;
 
-            foreach (var d in maybeDigits.Value)
-            {
-                top.AddLast(d.Top);
-                middle.AddLast(d.Middle);
-                bottom.AddLast(d.Bottom);
-            }
-
-            string stop = (new StringBuilder()).AppendJoin("+", top).ToString();
-            string smiddle = (new StringBuilder()).AppendJoin("+", middle).ToString();
-            string sbottom = (new StringBuilder()).AppendJoin("+", bottom).ToString();
-
+            var digits = maybeDigits.Value;
             return new []
             {
-                stop,
-                smiddle,
-                sbottom,
-                new string(' ', (accountNumber.Length - 1))
+                digits
+                    .Select(Top)
+                    .Concat(Delimiter),
+                digits
+                    .Select(Middle)
+                    .Concat(Delimiter),
+                digits
+                    .Select(Bottom)
+                    .Concat(Delimiter),
+                ""
             };
         }
     }
