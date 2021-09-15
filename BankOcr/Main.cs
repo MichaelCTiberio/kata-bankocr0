@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace BankOcr
 {
@@ -49,6 +50,9 @@ namespace BankOcr
         public static Maybe<T> Wrap(T value) => new () { Value = value, HasValue = (value != null) };
 
         public static Maybe<T> None { get; } = new () { Value = default, HasValue = false };
+
+        public override string ToString() =>
+            (HasValue) ? Value.ToString() : "<empty>";
     }
 
     public readonly struct Digit
@@ -57,6 +61,13 @@ namespace BankOcr
         public static implicit operator char(Digit digit) => digit.value;
 
         private Digit(char value) => this.value = value;
+
+        public static Maybe<Digit> FromChar(char c) =>
+            c switch
+            {
+                >= '0' and <= '9' => new Digit(c),
+                _ => Maybe<Digit>.None,
+            };
 
         public static Maybe<Digit> FromString(string s) =>
             s switch
@@ -114,6 +125,119 @@ namespace BankOcr
             " _ " +
             "|_|" +
             " _|";
+
+        public readonly string Top
+        {
+            get
+            {
+                string result = 
+                value switch
+                {
+                    '0' => Zero[0..3],
+                    '1' => One[0..3],
+                    '2' => Two[0..3],
+                    '3' => Three[0..3],
+                    '4' => Four[0..3],
+                    '5' => Five[0..3],
+                    '6' => Six[0..3],
+                    '7' => Seven[0..3],
+                    '8' => Eight[0..3],
+                    '9' => Nine[0..3],
+                    _ => throw new InvalidOperationException("Digit object is not valid")
+                };
+                return result;
+            }
+        }
+
+        public readonly string Middle
+        {
+            get
+            {
+                string result = 
+                value switch
+                {
+                    '0' => Zero[3..6],
+                    '1' => One[3..6],
+                    '2' => Two[3..6],
+                    '3' => Three[3..6],
+                    '4' => Four[3..6],
+                    '5' => Five[3..6],
+                    '6' => Six[3..6],
+                    '7' => Seven[3..6],
+                    '8' => Eight[3..6],
+                    '9' => Nine[3..6],
+                    _ => throw new InvalidOperationException("Digit object is not valid")
+                };
+                return result;
+            }
+        }
+
+        public readonly string Bottom
+        {
+            get
+            {
+                string result =
+                value switch
+                {
+                    '0' => Zero[6..9],
+                    '1' => One[6..9],
+                    '2' => Two[6..9],
+                    '3' => Three[6..9],
+                    '4' => Four[6..9],
+                    '5' => Five[6..9],
+                    '6' => Six[6..9],
+                    '7' => Seven[6..9],
+                    '8' => Eight[6..9],
+                    '9' => Nine[6..9],
+                    _ => throw new InvalidOperationException("Digit object is not valid")
+                };
+                return result;
+            }
+        }
+
+        public override string ToString() => value.ToString();
+    }
+
+    public readonly struct Account
+    {
+        public string Number { get; init; }
+
+        public static implicit operator string(Account account) => account.Number;
+
+        public static Maybe<Account> FromDigits(IEnumerable<Digit> digits)
+        {
+            using var endigits = digits.GetEnumerator();
+
+            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            char digit1 = endigits.Current;
+            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            char digit2 = endigits.Current;
+            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            char digit3 = endigits.Current;
+            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            char digit4 = endigits.Current;
+            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            char digit5 = endigits.Current;
+            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            char digit6 = endigits.Current;
+            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            char digit7 = endigits.Current;
+            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            char digit8 = endigits.Current;
+            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            char digit9 = endigits.Current;
+
+            // Check to make sure that there are no more digits.
+            if (endigits.MoveNext()) return Maybe<Account>.None;
+
+            string number = $"{digit1}{digit2}{digit3}" +
+                            $"{digit4}{digit5}{digit6}" +
+                            $"{digit7}{digit8}{digit9}";
+
+            return new Account { Number = number };
+        }
+
+        public override string ToString() => Number;
     }
 
     public static class FileReader
@@ -194,15 +318,73 @@ namespace BankOcr
                 Utility.Handler<IndexOutOfRangeException>(handler)
             );
 
+        public static Maybe<IEnumerable<Account>> AccountNumbersFromTextLines(IEnumerable<string> rows)
+        {
+            LinkedList<Account> accounts = new ();
+
+            using var enlines = rows.GetEnumerator();
+
+            while (enlines.MoveNext())
+            {
+                string rowTop = enlines.Current;
+                if (!enlines.MoveNext()) return Maybe<IEnumerable<Account>>.None;
+                string rowMiddle = enlines.Current;
+                if (!enlines.MoveNext()) return Maybe<IEnumerable<Account>>.None;
+                string rowBottom = enlines.Current;
+
+                // throw one row away, may not be present at the end of the file
+                enlines.MoveNext();
+
+                var cols = rowTop
+                    .Zip(rowMiddle, (top, middle) => (top, middle))
+                    .Zip(rowBottom, (item, bottom) => (item.top, item.middle, bottom));
+
+                using var encols = cols.GetEnumerator();
+
+                List<Digit> digits = new (9);
+
+                while (encols.MoveNext())
+                {
+                    if (digits.Count == 9) return Maybe<IEnumerable<Account>>.None;
+
+                    var first = encols.Current;
+                    if (!encols.MoveNext()) return Maybe<IEnumerable<Account>>.None;
+                    var second = encols.Current;
+                    if (!encols.MoveNext()) return Maybe<IEnumerable<Account>>.None;
+                    var third = encols.Current;
+
+                    // throw one column away, may not be present at the end of the account number
+                    encols.MoveNext();
+
+                    string s = $"{first.top   }{second.top   }{third.top   }" +
+                               $"{first.middle}{second.middle}{third.middle}" +
+                               $"{first.bottom}{second.bottom}{third.bottom}";
+
+                    var maybeDigit = Digit.FromString(s);
+                    if (!maybeDigit) return Maybe<IEnumerable<Account>>.None;
+                    digits.Add((Digit) maybeDigit);
+                }
+
+                var maybeAccount = Account.FromDigits((IEnumerable<Digit>) digits);
+                if (!maybeAccount) return Maybe<IEnumerable<Account>>.None;
+                accounts.AddLast((Account) maybeAccount);
+            }
+
+            return accounts;
+        }
+
         public static void Main(string[] args)
         {
-            // string(filename) -> TextReader(a StreamReader opened to the file)
-            // Lines: TextReader -> Result<IEnumerable<string>, Exception>(lines from file)
+            // User Story 1: args -> displayed list of account numbers
 
+            // * args -> filename
             var maybeFilename = FilenameFromArgs(args, HandleNoFilename);
 
-            if (maybeFilename)
-                WriteOutputLine($"File name: {(string) maybeFilename}");
+            // * filename -> enumeration of text lines
+
+            // enumeration of text lines -> enumeration of account numbers
+
+            // * display account numbers
 
         }
     }

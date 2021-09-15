@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace BankOcr.Tests
@@ -222,6 +224,63 @@ namespace BankOcr.Tests
             Func<IndexOutOfRangeException, bool> noHandler = (ex) => false;
 
             Assert.Throws<IndexOutOfRangeException>(() => Program.FilenameFromArgs(new string[] { }, noHandler));
+        }
+
+        [Theory]
+        [InlineData("000000000")]
+        [InlineData("111111111")]
+        [InlineData("222222222")]
+        [InlineData("333333333")]
+        [InlineData("444444444")]
+        [InlineData("555555555")]
+        [InlineData("666666666")]
+        [InlineData("777777777")]
+        [InlineData("888888888")]
+        [InlineData("999999999")]
+        public void ShouldGetAccountNumbersFromTextStream(string expected)
+        {
+            var lines = TestLib.AccountTextFromString(expected).Value;
+            var maybeAccounts = Program.AccountNumbersFromTextLines(lines);
+
+            Assert.True(maybeAccounts.HasValue);
+            string actual = maybeAccounts.Value.First().Number;
+            Assert.Equal(expected, actual);
+        }
+    }
+
+    public static class TestLib
+    {
+        public static Maybe<IEnumerable<string>> AccountTextFromString(string s)
+        {
+            LinkedList<string> top = new ();
+            LinkedList<string> middle = new ();
+            LinkedList<string> bottom = new ();
+
+            foreach (char c in s)
+            {
+                Maybe<Digit> maybeD = Digit.FromChar(c);
+
+                if (!maybeD)
+                    return Maybe<IEnumerable<string>>.None;
+
+                Digit d = (Digit) maybeD;
+
+                top.AddLast(d.Top);
+                middle.AddLast(d.Middle);
+                bottom.AddLast(d.Bottom);
+            }
+
+            string stop = (new StringBuilder()).AppendJoin("+", top).ToString();
+            string smiddle = (new StringBuilder()).AppendJoin("+", middle).ToString();
+            string sbottom = (new StringBuilder()).AppendJoin("+", bottom).ToString();
+
+            return new []
+            {
+                stop,
+                smiddle,
+                sbottom,
+                new string(' ', (s.Length - 1))
+            };
         }
     }
 }
