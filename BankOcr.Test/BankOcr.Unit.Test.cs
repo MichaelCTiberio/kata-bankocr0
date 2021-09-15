@@ -237,9 +237,10 @@ namespace BankOcr.Tests
         [InlineData("777777777")]
         [InlineData("888888888")]
         [InlineData("999999999")]
+        [InlineData("123456789")]
         public void ShouldGetAccountNumbersFromTextStream(string expected)
         {
-            var lines = TestLib.AccountTextFromString(expected).Value;
+            var lines = TestLib.AccountLinesFromAccountNumber(expected).Value;
             var maybeAccounts = Program.AccountNumbersFromTextLines(lines);
 
             Assert.True(maybeAccounts.HasValue);
@@ -250,21 +251,38 @@ namespace BankOcr.Tests
 
     public static class TestLib
     {
-        public static Maybe<IEnumerable<string>> AccountTextFromString(string s)
+        private static bool MaybeHasValue<T>(Maybe<T> maybe) => maybe.HasValue;
+
+        private static Maybe<IEnumerable<T>> MaybeEnumerable<T>(this IEnumerable<Maybe<T>> maybes)
+        {
+            return maybes.All(MaybeHasValue) ?
+                Maybe<IEnumerable<T>>.Wrap(EnumerableFromEnumerableMaybe(maybes)) :
+                Maybe<IEnumerable<T>>.None;
+
+            // The following function assumes that all the Maybe<T> items have a value.
+            // That is dangerous in general, so we hide it in the method scope.
+            static IEnumerable<T> EnumerableFromEnumerableMaybe(IEnumerable<Maybe<T>> maybes)
+            {
+                foreach (var item in maybes)
+                    yield return item.Value;
+            }
+        }
+
+        private static Maybe<IEnumerable<Digit>> FromAccountNumber(string accountNumber) =>
+            accountNumber.AsEnumerable().Select(Digit.FromChar).MaybeEnumerable();
+
+        public static Maybe<IEnumerable<string>> AccountLinesFromAccountNumber(string accountNumber)
         {
             LinkedList<string> top = new ();
             LinkedList<string> middle = new ();
             LinkedList<string> bottom = new ();
 
-            foreach (char c in s)
+            var maybeDigits = FromAccountNumber(accountNumber);
+
+            if (!maybeDigits) return Maybe<IEnumerable<string>>.None;
+
+            foreach (var d in maybeDigits.Value)
             {
-                Maybe<Digit> maybeD = Digit.FromChar(c);
-
-                if (!maybeD)
-                    return Maybe<IEnumerable<string>>.None;
-
-                Digit d = (Digit) maybeD;
-
                 top.AddLast(d.Top);
                 middle.AddLast(d.Middle);
                 bottom.AddLast(d.Bottom);
@@ -279,7 +297,7 @@ namespace BankOcr.Tests
                 stop,
                 smiddle,
                 sbottom,
-                new string(' ', (s.Length - 1))
+                new string(' ', (accountNumber.Length - 1))
             };
         }
     }
