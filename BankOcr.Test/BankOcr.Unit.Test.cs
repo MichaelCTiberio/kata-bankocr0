@@ -35,7 +35,7 @@ namespace BankOcr.Tests
             string s = "bad string";
 
             Maybe<Digit> noDigit = Digit.FromString(s);
-            Assert.False(noDigit.HasValue);
+            Assert.False(noDigit.HasValue());
         }
     }
 
@@ -70,7 +70,7 @@ namespace BankOcr.Tests
 
             var hasEx = ex.MaybeIs<NullReferenceException>();
 
-            Assert.True(hasEx.HasValue);
+            Assert.True(hasEx.HasValue());
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace BankOcr.Tests
 
             var noEx = ex.MaybeIs<InvalidOperationException>();
 
-            Assert.False(noEx.HasValue);
+            Assert.False(noEx.HasValue());
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace BankOcr.Tests
                 Utility.Handler(handlerThrowsInvalidOperation)
             );
 
-            Assert.True(hasString.HasValue);
+            Assert.True(hasString.HasValue());
 
             string actual = hasString.Value;
             Assert.Equal(expected, actual);
@@ -110,7 +110,7 @@ namespace BankOcr.Tests
 
             Maybe<string> noString = Utility.Try(throwNotImplemented, Utility.Handler(handleNotImplementedException));
 
-            Assert.False(noString.HasValue);
+            Assert.False(noString.HasValue());
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace BankOcr.Tests
                 Utility.Handler(handlerThrowsInvalidOperation)
             );
 
-            Assert.False(noString.HasValue);
+            Assert.False(noString.HasValue());
         }
 
 
@@ -157,7 +157,7 @@ namespace BankOcr.Tests
             );
 
             Assert.True(runButNotHandled);
-            Assert.False(noString.HasValue);
+            Assert.False(noString.HasValue());
         }
 
         private sealed class TestDisposable : IDisposable
@@ -195,7 +195,7 @@ namespace BankOcr.Tests
             );
 
             Assert.True(isDisposed);
-            Assert.True(hasTestString.HasValue);
+            Assert.True(hasTestString.HasValue());
             string actual = hasTestString.Value;
             Assert.Equal(expected, actual);
         }
@@ -213,7 +213,7 @@ namespace BankOcr.Tests
 
             var hasFilename = Program.FilenameFromArgs(new [] { expected }, handler);
 
-            Assert.True(hasFilename.HasValue);
+            Assert.True(hasFilename.HasValue());
             string actual = hasFilename.Value;
             Assert.Equal(expected, actual);
         }
@@ -243,7 +243,7 @@ namespace BankOcr.Tests
             var lines = TestLib.AccountLinesFromAccountNumber(expected).Value;
             var maybeAccounts = Program.AccountNumbersFromTextLines(lines);
 
-            Assert.True(maybeAccounts.HasValue);
+            Assert.True(maybeAccounts.HasValue());
             string actual = maybeAccounts.Value.First().Number;
             Assert.Equal(expected, actual);
         }
@@ -251,57 +251,29 @@ namespace BankOcr.Tests
 
     public static class TestLib
     {
-        private static bool MaybeHasValue<T>(Maybe<T> maybe) => maybe.HasValue;
-        private static string Top(this Digit d) => d.Top;
-        private static string Middle(this Digit d) => d.Middle;
-        private static string Bottom(this Digit d) => d.Bottom;
-
         private static string Concat(this IEnumerable<string> strings, char delimiter) =>
             (new StringBuilder())
                 .AppendJoin(delimiter, strings)
                 .ToString();
 
-        private static Maybe<IEnumerable<T>> MaybeEnumerable<T>(this IEnumerable<Maybe<T>> maybes)
-        {
-            return maybes.All(MaybeHasValue) ?
-                Maybe<IEnumerable<T>>.Wrap(EnumerableFromEnumerableMaybe(maybes)) :
-                Maybe<IEnumerable<T>>.None;
-
-            // The following function assumes that all the Maybe<T> items have a value.
-            // That is dangerous in general, so we hide it in the method scope.
-            static IEnumerable<T> EnumerableFromEnumerableMaybe(IEnumerable<Maybe<T>> maybes)
-            {
-                foreach (var item in maybes)
-                    yield return item.Value;
-            }
-        }
-
-        private static Maybe<IEnumerable<Digit>> ToDigits(this string accountNumber) =>
-            accountNumber
-                .AsEnumerable()
-                .Select(Digit.FromChar)
-                .MaybeEnumerable();
+        private static string ConcatDigits(this IEnumerable<Digit> digit, Func<Digit, string> func, char delimiter) =>
+            digit
+                .Select(func)
+                .Concat(delimiter);
 
         private const char Delimiter = '+';
 
         public static Maybe<IEnumerable<string>> AccountLinesFromAccountNumber(string accountNumber)
         {
             var maybeDigits = accountNumber.ToDigits();
-
             if (!maybeDigits) return Maybe<IEnumerable<string>>.None;
-
             var digits = maybeDigits.Value;
+
             return new []
             {
-                digits
-                    .Select(Top)
-                    .Concat(Delimiter),
-                digits
-                    .Select(Middle)
-                    .Concat(Delimiter),
-                digits
-                    .Select(Bottom)
-                    .Concat(Delimiter),
+                digits.ConcatDigits(Digit.Top, Delimiter),
+                digits.ConcatDigits(Digit.Middle, Delimiter),
+                digits.ConcatDigits(Digit.Bottom, Delimiter),
                 ""
             };
         }

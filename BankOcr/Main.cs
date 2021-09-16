@@ -43,16 +43,44 @@ namespace BankOcr
         public T Value { readonly get; init; }
         public static explicit operator T(Maybe<T> maybe) => maybe.Value;
 
-        public bool HasValue { readonly get; init; }
-        public static implicit operator bool(Maybe<T> maybe) => maybe.HasValue;
+        private readonly bool hasValue;
+        public static implicit operator bool(Maybe<T> maybe) => maybe.hasValue;
+
+        private Maybe(T value, bool hasValue)
+        {
+            this.Value = value;
+            this.hasValue = hasValue;
+        }
 
         public static implicit operator Maybe<T>(T value) => Maybe<T>.Wrap(value);
-        public static Maybe<T> Wrap(T value) => new () { Value = value, HasValue = (value != null) };
+        public static Maybe<T> Wrap(T value) => new (value: value, hasValue: (value != null));
 
-        public static Maybe<T> None { get; } = new () { Value = default, HasValue = false };
+        public static Maybe<T> None { get; } = new (value: default, hasValue: false);
+
+        public readonly bool HasValue() => hasValue;
+        public static bool HasValue(Maybe<T> maybe) => maybe.HasValue();
 
         public override string ToString() =>
-            (HasValue) ? Value.ToString() : "<empty>";
+            (hasValue) ? Value.ToString() : "<empty>";
+    }
+
+    public static class MaybeHelpers
+    {
+        public static Maybe<IEnumerable<T>> MaybeEnumerable<T>(this IEnumerable<Maybe<T>> maybes)
+        {
+            return maybes.All(Maybe<T>.HasValue) ?
+                Maybe<IEnumerable<T>>.Wrap(EnumerableFromEnumerableMaybe(maybes)) :
+                Maybe<IEnumerable<T>>.None;
+
+            // The following function assumes that all the Maybe<T> items have a value.
+            // That is dangerous in general, so we hide it in the method scope.
+            static IEnumerable<T> EnumerableFromEnumerableMaybe(IEnumerable<Maybe<T>> maybes)
+            {
+                foreach (var item in maybes)
+                    yield return item.Value;
+            }
+        }
+
     }
 
     public readonly struct Digit
@@ -89,113 +117,102 @@ namespace BankOcr
             " _ " +
             "| |" +
             "|_|";
-        public const string One = 
+        public const string One =
             "   " +
             "  |" +
             "  |";
-        public const string Two = 
+        public const string Two =
             " _ " +
             " _|" +
             "|_ ";
-        public const string Three = 
+        public const string Three =
             " _ " +
             " _|" +
             " _|";
-        public const string Four = 
+        public const string Four =
             "   " +
             "|_|" +
             "  |";
-        public const string Five = 
+        public const string Five =
             " _ " +
             "|_ " +
             " _|";
-        public const string Six = 
+        public const string Six =
             " _ " +
             "|_ " +
             "|_|";
-        public const string Seven = 
+        public const string Seven =
             " _ " +
             "  |" +
             "  |";
-        public const string Eight = 
+        public const string Eight =
             " _ " +
             "|_|" +
             "|_|";
-        public const string Nine = 
+        public const string Nine =
             " _ " +
             "|_|" +
             " _|";
 
-        public readonly string Top
-        {
-            get
+        public static string Top(Digit d) =>
+            d.value switch
             {
-                string result = 
-                value switch
-                {
-                    '0' => Zero[0..3],
-                    '1' => One[0..3],
-                    '2' => Two[0..3],
-                    '3' => Three[0..3],
-                    '4' => Four[0..3],
-                    '5' => Five[0..3],
-                    '6' => Six[0..3],
-                    '7' => Seven[0..3],
-                    '8' => Eight[0..3],
-                    '9' => Nine[0..3],
-                    _ => throw new InvalidOperationException("Digit object is not valid")
-                };
-                return result;
-            }
-        }
+                '0' => Zero[0..3],
+                '1' => One[0..3],
+                '2' => Two[0..3],
+                '3' => Three[0..3],
+                '4' => Four[0..3],
+                '5' => Five[0..3],
+                '6' => Six[0..3],
+                '7' => Seven[0..3],
+                '8' => Eight[0..3],
+                '9' => Nine[0..3],
+                _ => throw new InvalidOperationException("Digit object is not valid")
+            };
 
-        public readonly string Middle
-        {
-            get
+        public static string Middle(Digit d) =>
+            d.value switch
             {
-                string result = 
-                value switch
-                {
-                    '0' => Zero[3..6],
-                    '1' => One[3..6],
-                    '2' => Two[3..6],
-                    '3' => Three[3..6],
-                    '4' => Four[3..6],
-                    '5' => Five[3..6],
-                    '6' => Six[3..6],
-                    '7' => Seven[3..6],
-                    '8' => Eight[3..6],
-                    '9' => Nine[3..6],
-                    _ => throw new InvalidOperationException("Digit object is not valid")
-                };
-                return result;
-            }
-        }
+                '0' => Zero[3..6],
+                '1' => One[3..6],
+                '2' => Two[3..6],
+                '3' => Three[3..6],
+                '4' => Four[3..6],
+                '5' => Five[3..6],
+                '6' => Six[3..6],
+                '7' => Seven[3..6],
+                '8' => Eight[3..6],
+                '9' => Nine[3..6],
+                _ => throw new InvalidOperationException("Digit object is not valid")
+            };
 
-        public readonly string Bottom
-        {
-            get
+        public static string Bottom(Digit d) =>
+            d.value switch
             {
-                string result =
-                value switch
-                {
-                    '0' => Zero[6..9],
-                    '1' => One[6..9],
-                    '2' => Two[6..9],
-                    '3' => Three[6..9],
-                    '4' => Four[6..9],
-                    '5' => Five[6..9],
-                    '6' => Six[6..9],
-                    '7' => Seven[6..9],
-                    '8' => Eight[6..9],
-                    '9' => Nine[6..9],
-                    _ => throw new InvalidOperationException("Digit object is not valid")
-                };
-                return result;
-            }
-        }
+                '0' => Zero[6..9],
+                '1' => One[6..9],
+                '2' => Two[6..9],
+                '3' => Three[6..9],
+                '4' => Four[6..9],
+                '5' => Five[6..9],
+                '6' => Six[6..9],
+                '7' => Seven[6..9],
+                '8' => Eight[6..9],
+                '9' => Nine[6..9],
+                _ => throw new InvalidOperationException("Digit object is not valid")
+            };
 
         public override string ToString() => value.ToString();
+    }
+
+    public static class DigitHelpers
+    {
+        public static Maybe<IEnumerable<Digit>> ToDigits(this string accountNumber) =>
+            accountNumber
+                .AsEnumerable()
+                .Select(Digit.FromChar)
+                .MaybeEnumerable();
+
     }
 
     public readonly struct Account
