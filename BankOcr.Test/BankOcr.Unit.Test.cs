@@ -240,7 +240,7 @@ namespace BankOcr.Tests
         [InlineData("123456789")]
         public void ShouldGetAccountNumbersFromTextStream(string expected)
         {
-            var lines = TestLib.AccountLinesFromAccountNumber(expected).Value;
+            var lines = TestLib.AccountLinesFromAccountNumber(expected);
             var maybeAccounts = Program.AccountNumbersFromTextLines(lines);
 
             Assert.True(maybeAccounts.HasValue());
@@ -251,19 +251,18 @@ namespace BankOcr.Tests
 
     public static class TestLib
     {
-        public static Maybe<IEnumerable<string>> AccountLinesFromAccountNumber(string accountNumber) =>
+        public static IEnumerable<string> AccountLinesFromAccountNumber(string accountNumber) =>
             accountNumber
                 .ToDigits()
-                .Map(TextLines);
+                .TextLines();
 
-        private static Maybe<IEnumerable<Digit>> ToDigits(this string accountNumber) =>
+        private static IEnumerable<Digit> ToDigits(this string accountNumber) =>
             accountNumber
                 .AsEnumerable()
-                .Select(Digit.FromChar)
-                .MaybeEnumerable();
+                .Select((c) => Digit.FromChar(c).Value);
 
         private const char Delimiter = ' ';
-        private static IEnumerable<string> TextLines(IEnumerable<Digit> digits)
+        private static IEnumerable<string> TextLines(this IEnumerable<Digit> digits)
         {
             yield return digits.ConcatDigits(Digit.Top, Delimiter);
             yield return digits.ConcatDigits(Digit.Middle, Delimiter);
