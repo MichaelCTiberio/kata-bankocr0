@@ -95,14 +95,14 @@ namespace BankOcr
 
         private Digit(char value) => this.value = value;
 
-        public static Maybe<Digit> FromChar(char c) =>
+        public static Digit FromChar(char c) =>
             c switch
             {
                 >= '0' and <= '9' => new Digit(c),
-                _ => Maybe<Digit>.None,
+                _ => throw new NotImplementedException("Invalid char"),
             };
 
-        public static Maybe<Digit> FromString(string s) =>
+        public static Digit FromString(string s) =>
             s switch
             {
                 Zero => new Digit('0'),
@@ -115,7 +115,7 @@ namespace BankOcr
                 Seven => new Digit('7'),
                 Eight => new Digit('8'),
                 Nine => new Digit('9'),
-                _ => Maybe<Digit>.None,
+                _ => throw new NotImplementedException("Invalid string"),
             };
 
         public const string Zero =
@@ -216,31 +216,28 @@ namespace BankOcr
 
         public static implicit operator string(Account account) => account.Number;
 
-        public static Maybe<Account> FromDigits(IEnumerable<Digit> digits)
+        public static Account FromDigits(IEnumerable<Digit> digits)
         {
             using var endigits = digits.GetEnumerator();
 
-            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            endigits.MoveNext();
             char digit1 = endigits.Current;
-            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            endigits.MoveNext();
             char digit2 = endigits.Current;
-            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            endigits.MoveNext();
             char digit3 = endigits.Current;
-            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            endigits.MoveNext();
             char digit4 = endigits.Current;
-            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            endigits.MoveNext();
             char digit5 = endigits.Current;
-            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            endigits.MoveNext();
             char digit6 = endigits.Current;
-            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            endigits.MoveNext();
             char digit7 = endigits.Current;
-            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            endigits.MoveNext();
             char digit8 = endigits.Current;
-            if (!endigits.MoveNext()) return Maybe<Account>.None;
+            endigits.MoveNext();
             char digit9 = endigits.Current;
-
-            // Check to make sure that there are no more digits.
-            if (endigits.MoveNext()) return Maybe<Account>.None;
 
             string number = $"{digit1}{digit2}{digit3}" +
                             $"{digit4}{digit5}{digit6}" +
@@ -261,6 +258,7 @@ namespace BankOcr
                 yield return line;
         }
 
+        // TODO: Should not be using Catch
         public static Maybe<IEnumerable<string>> Lines(TextReader reader) =>
             (Maybe<IEnumerable<string>>)
                 Result<IEnumerable<string>, Exception>.Catch(() => LinesEnumerable(reader));
@@ -278,11 +276,9 @@ namespace BankOcr
 
         public static Maybe<T> Try<T>(Func<Maybe<T>> f, IEnumerable<Func<Exception, bool>> handlers)
         {
-            Maybe<T> ret = Maybe<T>.None;
-
             try
             {
-                 ret = f();
+                 return f();
             }
             catch (Exception ex)
             {
@@ -290,11 +286,11 @@ namespace BankOcr
                     throw;
             }
 
-            return ret;
+            return Maybe<T>.None;
         }
 
-        public static Maybe<T> Try<T>(Func<Maybe<T>> f, params Func<Exception, bool> [] handlers) =>
-            Try(f, (IEnumerable<Func<Exception, bool>>) handlers);
+        public static Maybe<T> Try<T>(Func<Maybe<T>> func, params Func<Exception, bool> [] handlers) =>
+            Try(func, (IEnumerable<Func<Exception, bool>>) handlers);
 
         public static Func<Exception, bool> Handler<TException>(Func<TException, bool> handler)
             where TException : Exception =>
@@ -306,11 +302,11 @@ namespace BankOcr
                     false;
             };
 
-        public static Maybe<T> Use<TDisposable, T>(TDisposable disposable, Func<TDisposable, T> f)
+        public static T Use<TDisposable, T>(TDisposable disposable, Func<TDisposable, T> func)
             where TDisposable : IDisposable
         {
             using TDisposable resource = disposable;
-            return f(resource);
+            return func(resource);
         }
     }
 
@@ -330,7 +326,7 @@ namespace BankOcr
                 Utility.Handler<IndexOutOfRangeException>(handler)
             );
 
-        public static Maybe<IEnumerable<Account>> AccountNumbersFromTextLines(IEnumerable<string> rows)
+        public static IEnumerable<Account> AccountNumbersFromTextLines(IEnumerable<string> rows)
         {
             LinkedList<Account> accounts = new ();
 
@@ -339,9 +335,9 @@ namespace BankOcr
             while (enlines.MoveNext())
             {
                 string rowTop = enlines.Current;
-                if (!enlines.MoveNext()) return Maybe<IEnumerable<Account>>.None;
+                enlines.MoveNext();
                 string rowMiddle = enlines.Current;
-                if (!enlines.MoveNext()) return Maybe<IEnumerable<Account>>.None;
+                enlines.MoveNext();
                 string rowBottom = enlines.Current;
 
                 // throw one row away, may not be present at the end of the file
@@ -357,12 +353,10 @@ namespace BankOcr
 
                 while (encols.MoveNext())
                 {
-                    if (digits.Count == 9) return Maybe<IEnumerable<Account>>.None;
-
                     var first = encols.Current;
-                    if (!encols.MoveNext()) return Maybe<IEnumerable<Account>>.None;
+                    encols.MoveNext();
                     var second = encols.Current;
-                    if (!encols.MoveNext()) return Maybe<IEnumerable<Account>>.None;
+                    encols.MoveNext();
                     var third = encols.Current;
 
                     // throw one column away, may not be present at the end of the account number
@@ -372,14 +366,10 @@ namespace BankOcr
                                $"{first.middle}{second.middle}{third.middle}" +
                                $"{first.bottom}{second.bottom}{third.bottom}";
 
-                    var maybeDigit = Digit.FromString(s);
-                    if (!maybeDigit) return Maybe<IEnumerable<Account>>.None;
-                    digits.Add((Digit) maybeDigit);
+                    digits.Add(Digit.FromString(s));
                 }
 
-                var maybeAccount = Account.FromDigits((IEnumerable<Digit>) digits);
-                if (!maybeAccount) return Maybe<IEnumerable<Account>>.None;
-                accounts.AddLast((Account) maybeAccount);
+                accounts.AddLast(Account.FromDigits((IEnumerable<Digit>) digits));
             }
 
             return accounts;

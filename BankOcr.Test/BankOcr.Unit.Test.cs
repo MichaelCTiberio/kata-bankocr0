@@ -22,20 +22,10 @@ namespace BankOcr.Tests
         [InlineData(Digit.Nine, '9')]
         public void ShouldConvert(string s, char expected)
         {
-            Maybe<Digit> hasDigit = Digit.FromString(s);
-            Assert.True(hasDigit);
+            var digit = Digit.FromString(s);
 
-            char actual = hasDigit.Value;
+            char actual = (char) digit;
             Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public void ShouldNotConvert()
-        {
-            string s = "bad string";
-
-            Maybe<Digit> noDigit = Digit.FromString(s);
-            Assert.False(noDigit.HasValue());
         }
     }
 
@@ -189,14 +179,12 @@ namespace BankOcr.Tests
             string expected = "test string";
             bool isDisposed = false;
 
-            var hasTestString = Utility.Use(
+            var actual = Utility.Use(
                 new TestDisposable(expected, () => isDisposed = true),
                 (resource) => resource.TestString
             );
 
             Assert.True(isDisposed);
-            Assert.True(hasTestString.HasValue());
-            string actual = hasTestString.Value;
             Assert.Equal(expected, actual);
         }
     }
@@ -241,10 +229,9 @@ namespace BankOcr.Tests
         public void ShouldGetAccountNumbersFromTextStream(string expected)
         {
             var lines = TestLib.AccountLinesFromAccountNumber(expected);
-            var maybeAccounts = Program.AccountNumbersFromTextLines(lines);
+            var accounts = Program.AccountNumbersFromTextLines(lines);
 
-            Assert.True(maybeAccounts.HasValue());
-            string actual = maybeAccounts.Value.First().Number;
+            string actual = accounts.First().Number;
             Assert.Equal(expected, actual);
         }
     }
@@ -259,7 +246,7 @@ namespace BankOcr.Tests
         private static IEnumerable<Digit> ToDigits(this string accountNumber) =>
             accountNumber
                 .AsEnumerable()
-                .Select((c) => Digit.FromChar(c).Value);
+                .Select((c) => Digit.FromChar(c));
 
         private const char Delimiter = ' ';
         private static IEnumerable<string> TextLines(this IEnumerable<Digit> digits)
