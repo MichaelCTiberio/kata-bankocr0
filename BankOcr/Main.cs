@@ -60,6 +60,11 @@ namespace BankOcr
         public readonly bool HasValue() => hasValue;
         public static bool HasValue(Maybe<T> maybe) => maybe.HasValue();
 
+        public readonly Maybe<TReturn> Map<TReturn>(Func<T, TReturn> f) =>
+            hasValue ?
+                f(Value) :
+                Maybe<TReturn>.None;
+
         public override string ToString() =>
             (hasValue) ? Value.ToString() : "<empty>";
     }
@@ -203,16 +208,6 @@ namespace BankOcr
             };
 
         public override string ToString() => value.ToString();
-    }
-
-    public static class DigitHelpers
-    {
-        public static Maybe<IEnumerable<Digit>> ToDigits(this string accountNumber) =>
-            accountNumber
-                .AsEnumerable()
-                .Select(Digit.FromChar)
-                .MaybeEnumerable();
-
     }
 
     public readonly struct Account

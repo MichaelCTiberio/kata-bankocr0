@@ -251,31 +251,34 @@ namespace BankOcr.Tests
 
     public static class TestLib
     {
-        private static string Concat(this IEnumerable<string> strings, char delimiter) =>
-            (new StringBuilder())
-                .AppendJoin(delimiter, strings)
-                .ToString();
+        public static Maybe<IEnumerable<string>> AccountLinesFromAccountNumber(string accountNumber) =>
+            accountNumber
+                .ToDigits()
+                .Map(TextLines);
+
+        private static Maybe<IEnumerable<Digit>> ToDigits(this string accountNumber) =>
+            accountNumber
+                .AsEnumerable()
+                .Select(Digit.FromChar)
+                .MaybeEnumerable();
+
+        private const char Delimiter = ' ';
+        private static IEnumerable<string> TextLines(IEnumerable<Digit> digits)
+        {
+            yield return digits.ConcatDigits(Digit.Top, Delimiter);
+            yield return digits.ConcatDigits(Digit.Middle, Delimiter);
+            yield return digits.ConcatDigits(Digit.Bottom, Delimiter);
+            yield return "";
+        }
 
         private static string ConcatDigits(this IEnumerable<Digit> digit, Func<Digit, string> func, char delimiter) =>
             digit
                 .Select(func)
                 .Concat(delimiter);
 
-        private const char Delimiter = '+';
-
-        public static Maybe<IEnumerable<string>> AccountLinesFromAccountNumber(string accountNumber)
-        {
-            var maybeDigits = accountNumber.ToDigits();
-            if (!maybeDigits) return Maybe<IEnumerable<string>>.None;
-            var digits = maybeDigits.Value;
-
-            return new []
-            {
-                digits.ConcatDigits(Digit.Top, Delimiter),
-                digits.ConcatDigits(Digit.Middle, Delimiter),
-                digits.ConcatDigits(Digit.Bottom, Delimiter),
-                ""
-            };
-        }
+        private static string Concat(this IEnumerable<string> strings, char delimiter) =>
+            (new StringBuilder())
+                .AppendJoin(delimiter, strings)
+                .ToString();
     }
 }
