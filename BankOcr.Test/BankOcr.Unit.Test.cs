@@ -78,7 +78,7 @@ namespace BankOcr.Tests
         {
             string expected = "no exception";
 
-            Func<Maybe<string>> noThrow = () => expected;
+            Func<string> noThrow = () => expected;
             Func<Exception, bool> handlerThrowsInvalidOperation = (ex) => throw new InvalidOperationException("should not get here");
 
             Maybe<string> hasString = Utility.Try(
@@ -95,7 +95,7 @@ namespace BankOcr.Tests
         [Fact]
         public void TryExceptionCaught()
         {
-            Func<Maybe<string>> throwNotImplemented = () => throw new NotImplementedException("should have been caught");
+            Func<string> throwNotImplemented = () => throw new NotImplementedException("should have been caught");
             Func<NotImplementedException, bool> handleNotImplementedException = (ex) => true;
 
             Maybe<string> noString = Utility.Try(throwNotImplemented, Utility.Handler(handleNotImplementedException));
@@ -117,7 +117,7 @@ namespace BankOcr.Tests
         [Fact]
         public void TryExceptionCaughtWithFirstHandler()
         {
-            Func<Maybe<string>> throwNotImplemented = () => throw new NotImplementedException("should have been caught");
+            Func<string> throwNotImplemented = () => throw new NotImplementedException("should have been caught");
             Func<NotImplementedException, bool> handleNotImplementedException = (ex) => true;
             Func<Exception, bool> handlerThrowsInvalidOperation = (ex) => throw new InvalidOperationException("should not get here");
 
@@ -136,7 +136,7 @@ namespace BankOcr.Tests
         {
             bool runButNotHandled = false;
 
-            Func<Maybe<string>> throwNotImplemented = () => throw new NotImplementedException("should have been caught");
+            Func<string> throwNotImplemented = () => throw new NotImplementedException("should have been caught");
             Func<Exception, bool> doesNotHandleException = (ex) => { runButNotHandled = true; return false; };
             Func<NotImplementedException, bool> handleNotImplementedException = (ex) => true;
 

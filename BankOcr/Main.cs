@@ -6,38 +6,6 @@ using System.Text;
 
 namespace BankOcr
 {
-    public readonly struct Result<T, TError>
-    {
-        public T Value { readonly get; init; }
-        public TError Error { readonly get; init; }
-
-        public bool Success { readonly get; init; }
-        public static implicit operator bool(Result<T, TError> result) => result.Success;
-
-        public static implicit operator Result<T, TError>(T value) => Result<T, TError>.Wrap(value);
-        public static Result<T, TError> Wrap(T value) =>
-            new () { Value = value, Error = default, Success = true };
-
-        public static implicit operator Result<T, TError>(TError error) => Result<T, TError>.Wrap(error);
-        public static Result<T, TError> Wrap(TError error) =>
-            new () { Value = default, Error = error, Success = false };
-
-        public static explicit operator Maybe<T>(Result<T, TError> result) =>
-            (result.Success ? result.Value : Maybe<T>.None);
-
-        public static Result<T, Exception> Catch(Func<T> f)
-        {
-            try
-            {
-                return f();
-            }
-            catch (Exception e)
-            {
-                return e;
-            }
-        }
-    }
-
     public readonly struct Maybe<T>
     {
         public T Value { readonly get; init; }
@@ -258,10 +226,8 @@ namespace BankOcr
                 yield return line;
         }
 
-        // TODO: Should not be using Catch
         public static Maybe<IEnumerable<string>> Lines(TextReader reader) =>
-            (Maybe<IEnumerable<string>>)
-                Result<IEnumerable<string>, Exception>.Catch(() => LinesEnumerable(reader));
+            Utility.Try(() => LinesEnumerable(reader), (e) => false);
     }
 
     public static class Utility
@@ -274,7 +240,7 @@ namespace BankOcr
             return Maybe<T>.None;
         }
 
-        public static Maybe<T> Try<T>(Func<Maybe<T>> f, IEnumerable<Func<Exception, bool>> handlers)
+        public static Maybe<T> Try<T>(Func<T> f, IEnumerable<Func<Exception, bool>> handlers)
         {
             try
             {
@@ -289,7 +255,7 @@ namespace BankOcr
             return Maybe<T>.None;
         }
 
-        public static Maybe<T> Try<T>(Func<Maybe<T>> func, params Func<Exception, bool> [] handlers) =>
+        public static Maybe<T> Try<T>(Func<T> func, params Func<Exception, bool> [] handlers) =>
             Try(func, (IEnumerable<Func<Exception, bool>>) handlers);
 
         public static Func<Exception, bool> Handler<TException>(Func<TException, bool> handler)
