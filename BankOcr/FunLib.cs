@@ -6,7 +6,21 @@ namespace FunLib
 {
     public readonly struct Maybe<T>
     {
-        public T Value { readonly get; init; }
+        private readonly T _value;
+
+        public T Value
+        {
+            readonly get
+            {
+                if (!hasValue)
+                    throw new InvalidOperationException($"{nameof(Maybe<T>)} does not contain a value");
+
+                return _value;
+            }
+
+            init { _value = value; }
+        }
+
         public static explicit operator T(Maybe<T> maybe) => maybe.Value;
 
         private readonly bool hasValue;
@@ -14,7 +28,7 @@ namespace FunLib
 
         private Maybe(T value, bool hasValue)
         {
-            this.Value = value;
+            this._value = value;
             this.hasValue = hasValue;
         }
 
@@ -26,9 +40,14 @@ namespace FunLib
         public readonly bool HasValue() => hasValue;
         public static bool HasValue(Maybe<T> maybe) => maybe.HasValue();
 
-        public readonly Maybe<TReturn> Map<TReturn>(Func<T, TReturn> f) =>
+        public readonly Maybe<TReturn> Map<TReturn>(Func<T, TReturn> func) =>
             hasValue ?
-                f(Value) :
+                func(Value) :
+                Maybe<TReturn>.None;
+
+        public readonly Maybe<TReturn> Map<TReturn>(Maybe<Func<T, TReturn>> maybeFunc) =>
+            hasValue && maybeFunc.hasValue ?
+                maybeFunc.Value(Value) :
                 Maybe<TReturn>.None;
 
         public override string ToString() =>
@@ -44,7 +63,6 @@ namespace FunLib
                 Maybe<IEnumerable<T>>.None;
 
             // The following function assumes that all the Maybe<T> items have a value.
-            // That is dangerous in general, so we hide it in the method scope.
             static IEnumerable<T> EnumerableFromEnumerableMaybe(IEnumerable<Maybe<T>> maybes)
             {
                 foreach (var item in maybes)
@@ -52,6 +70,10 @@ namespace FunLib
             }
         }
 
+        public static Maybe<T> Next<T>(this IEnumerator<T> en) =>
+            en.MoveNext() ?
+                en.Current :
+                Maybe<T>.None;
     }
 
     public static class Fn

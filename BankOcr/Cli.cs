@@ -36,53 +36,77 @@ namespace BankOcr.Cli
                 Fn.Handler<IndexOutOfRangeException>(handler)
             );
 
-        public static IEnumerable<Account> AccountNumbersFromTextLines(IEnumerable<string> rows)
+        public static IEnumerable<Account> AccountNumbersFromTextLines(IEnumerable<string> lines)
         {
-            LinkedList<Account> accounts = new ();
+            using var enlines = lines.GetEnumerator();
 
-            using var enlines = rows.GetEnumerator();
-
-            while (enlines.MoveNext())
+            do
             {
-                string rowTop = enlines.Current;
-                enlines.MoveNext();
-                string rowMiddle = enlines.Current;
-                enlines.MoveNext();
-                string rowBottom = enlines.Current;
+                var maybeTop = enlines.Next();
 
-                // throw one row away, may not be present at the end of the file
-                enlines.MoveNext();
+                // End of file
+                if (!maybeTop)
+                    yield break;
 
-                var cols = rowTop
-                    .Zip(rowMiddle, (top, middle) => (top, middle))
-                    .Zip(rowBottom, (item, bottom) => (item.top, item.middle, bottom));
+                var top = maybeTop.Value;
+                var middle = enlines.Next().Value;
+                var bottom = enlines.Next().Value;
 
-                using var encols = cols.GetEnumerator();
+                var account = GetNineDigits(top, middle, bottom).FromDigits();
 
-                List<Digit> digits = new (9);
+                yield return account;
 
-                while (encols.MoveNext())
-                {
-                    var first = encols.Current;
-                    encols.MoveNext();
-                    var second = encols.Current;
-                    encols.MoveNext();
-                    var third = encols.Current;
+            } while (enlines.Next());
+        }
 
-                    // throw one column away, may not be present at the end of the account number
-                    encols.MoveNext();
+        public static IEnumerable<Digit2> GetNineDigits(string top, string middle, string bottom)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                Func<string, string> ThreeCharsAtOffset = (s => ThreeCharsAt(s, OffsetFromIndex(i)));
 
-                    string s = $"{first.top   }{second.top   }{third.top   }" +
-                               $"{first.middle}{second.middle}{third.middle}" +
-                               $"{first.bottom}{second.bottom}{third.bottom}";
+                var maybeStrings = new [] { ThreeCharsAtOffset(top), ThreeCharsAtOffset(middle), ThreeCharsAtOffset(bottom) };
+                var rowToDigitMaps = new Func<string, Digit2> [] { TopRowToDigit, MiddleRowToDigit, BottomRowToDigit };
 
-                    digits.Add(Digit.FromString(s));
-                }
-
-                accounts.AddLast(Account.FromDigits((IEnumerable<Digit>) digits));
+                yield return maybeStrings
+                    .Zip(rowToDigitMaps)
+                    .Select(MapRowToDigit)
+                    .Aggregate(Digit2.All, (accumulator, digit) => accumulator * digit);
             }
 
-            return accounts;
+            static int OffsetFromIndex(int index) => index * 4;
+            static string ThreeCharsAt(string s, int offset) => s.Substring(offset, 3);
+            static Digit2 MapRowToDigit((string row, Func<string, Digit2> rowToDigit) pair) => pair.rowToDigit(pair.row);
+
+            static Digit2 TopRowToDigit(string topRow) =>
+                topRow switch
+                {
+                    " _ " => Digit2.Zero + Digit2.Two + Digit2.Three + Digit2.Five +
+                             Digit2.Six + Digit2.Seven + Digit2.Eight + Digit2.Nine,
+                    "   " => Digit2.One + Digit2.Four,
+                    _ => throw new ArgumentException($"{nameof(topRow)} contans an invalid pattern: '{topRow}'")
+                };
+
+            static Digit2 MiddleRowToDigit(string middleRow) =>
+                middleRow switch
+                {
+                    "| |" => Digit2.Zero,
+                    "  |" => Digit2.One + Digit2.Seven,
+                    " _|" => Digit2.Two + Digit2.Three,
+                    "|_|" => Digit2.Four + Digit2.Eight + Digit2.Nine,
+                    "|_ " => Digit2.Five + Digit2.Six,
+                    _ => throw new ArgumentException($"{nameof(middleRow)} contans an invalid pattern: '{middleRow}'")
+                };
+
+            static Digit2 BottomRowToDigit(string bottomRow) =>
+                bottomRow switch
+                {
+                    "|_|" => Digit2.Zero + Digit2.Six + Digit2.Eight,
+                    "  |" => Digit2.One + Digit2.Four + Digit2.Seven,
+                    "|_ " => Digit2.Two,
+                    " _|" => Digit2.Three + Digit2.Five + Digit2.Nine,
+                    _ => throw new ArgumentException($"{nameof(bottomRow)} contans an invalid pattern: '{bottomRow}'")
+                };
         }
 
         public static void Main(string[] args)
