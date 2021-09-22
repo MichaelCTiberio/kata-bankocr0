@@ -73,6 +73,7 @@ namespace BankOcr.Cli.Tests
             var lines = TestLib.AccountLinesFromAccountNumber(expected);
             var accounts = Program.AccountNumbersFromTextLines(lines);
 
+            Assert.Single(accounts);
             string actual = accounts.First().Number;
             Assert.Equal(expected, actual);
         }
@@ -88,11 +89,12 @@ namespace BankOcr.Cli.Tests
         private static IEnumerable<Digit> ToDigits(this string accountNumber) =>
             accountNumber
                 .AsEnumerable()
-                .Select((c) => Digit.FromChar(c));
+                .Select(Digit.FromChar);
 
-        private const char Delimiter = ' ';
         private static IEnumerable<string> TextLines(this IEnumerable<Digit> digits)
         {
+            const char Delimiter = ' ';
+
             yield return digits.ConcatDigits(Digit.Top, Delimiter);
             yield return digits.ConcatDigits(Digit.Middle, Delimiter);
             yield return digits.ConcatDigits(Digit.Bottom, Delimiter);
