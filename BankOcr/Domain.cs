@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace BankOcr.Domain
 {
-    public struct Digit2
+    public struct Digit
     {
         private enum DigitMask
         {
@@ -23,11 +23,11 @@ namespace BankOcr.Domain
 
         DigitMask mask { get; init; }
 
-        public static Digit2 operator +(Digit2 lhs, Digit2 rhs) => new Digit2 { mask = lhs.mask | rhs.mask };
+        public static Digit operator +(Digit lhs, Digit rhs) => new Digit { mask = lhs.mask | rhs.mask };
 
-        public static Digit2 operator *(Digit2 lhs, Digit2 rhs) => new Digit2 { mask = lhs.mask & rhs.mask };
+        public static Digit operator *(Digit lhs, Digit rhs) => new Digit { mask = lhs.mask & rhs.mask };
 
-        public static explicit operator char(Digit2 digit) =>
+        public static explicit operator char(Digit digit) =>
             digit.mask switch
             {
                 DigitMask.Zero => '0',
@@ -40,20 +40,20 @@ namespace BankOcr.Domain
                 DigitMask.Seven => '7',
                 DigitMask.Eight => '8',
                 DigitMask.Nine => '9',
-                _ => throw new InvalidOperationException($"{nameof(Digit2)} is in an invalid state: {digit.mask:X}")
+                _ => throw new InvalidOperationException($"{nameof(Digit)} is in an invalid state: {digit.mask:X}")
             };
 
-        public static Digit2 Zero = new Digit2 { mask = DigitMask.Zero };
-        public static Digit2 One = new Digit2 { mask = DigitMask.One };
-        public static Digit2 Two = new Digit2 { mask = DigitMask.Two };
-        public static Digit2 Three = new Digit2 { mask = DigitMask.Three };
-        public static Digit2 Four = new Digit2 { mask = DigitMask.Four };
-        public static Digit2 Five = new Digit2 { mask = DigitMask.Five };
-        public static Digit2 Six = new Digit2 { mask = DigitMask.Six };
-        public static Digit2 Seven = new Digit2 { mask = DigitMask.Seven };
-        public static Digit2 Eight = new Digit2 { mask = DigitMask.Eight };
-        public static Digit2 Nine = new Digit2 { mask = DigitMask.Nine }; 
-        public static Digit2 All = new Digit2 { mask = DigitMask.All };
+        public static Digit Zero = new Digit { mask = DigitMask.Zero };
+        public static Digit One = new Digit { mask = DigitMask.One };
+        public static Digit Two = new Digit { mask = DigitMask.Two };
+        public static Digit Three = new Digit { mask = DigitMask.Three };
+        public static Digit Four = new Digit { mask = DigitMask.Four };
+        public static Digit Five = new Digit { mask = DigitMask.Five };
+        public static Digit Six = new Digit { mask = DigitMask.Six };
+        public static Digit Seven = new Digit { mask = DigitMask.Seven };
+        public static Digit Eight = new Digit { mask = DigitMask.Eight };
+        public static Digit Nine = new Digit { mask = DigitMask.Nine }; 
+        public static Digit All = new Digit { mask = DigitMask.All };
     }
 
     public readonly struct Account
@@ -67,7 +67,7 @@ namespace BankOcr.Domain
 
     public static class AccountHelpers
     {
-        public static Account FromDigits(this IEnumerable<Digit2> digits) =>
+        public static Account FromDigits(this IEnumerable<Digit> digits) =>
             new Account
             {
                 Number = (new System.Text.StringBuilder()).AppendJoin("", digits.Select(digit => (char) digit)).ToString()

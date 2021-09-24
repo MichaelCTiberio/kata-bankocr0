@@ -59,52 +59,52 @@ namespace BankOcr.Cli
             } while (enlines.Next());
         }
 
-        public static IEnumerable<Digit2> GetNineDigits(string top, string middle, string bottom)
+        public static IEnumerable<Digit> GetNineDigits(string top, string middle, string bottom)
         {
             for (int i = 0; i < 9; i++)
             {
                 Func<string, string> ThreeCharsAtOffset = (s => ThreeCharsAt(s, OffsetFromIndex(i)));
 
                 var maybeStrings = new [] { ThreeCharsAtOffset(top), ThreeCharsAtOffset(middle), ThreeCharsAtOffset(bottom) };
-                var rowToDigitMaps = new Func<string, Digit2> [] { TopRowToDigit, MiddleRowToDigit, BottomRowToDigit };
+                var rowToDigitMaps = new Func<string, Digit> [] { TopRowToDigit, MiddleRowToDigit, BottomRowToDigit };
 
                 yield return maybeStrings
                     .Zip(rowToDigitMaps)
                     .Select(MapRowToDigit)
-                    .Aggregate(Digit2.All, (accumulator, digit) => accumulator * digit);
+                    .Aggregate(Digit.All, (accumulator, digit) => accumulator * digit);
             }
 
             static int OffsetFromIndex(int index) => index * 4;
             static string ThreeCharsAt(string s, int offset) => s.Substring(offset, 3);
-            static Digit2 MapRowToDigit((string row, Func<string, Digit2> rowToDigit) pair) => pair.rowToDigit(pair.row);
+            static Digit MapRowToDigit((string row, Func<string, Digit> rowToDigit) pair) => pair.rowToDigit(pair.row);
 
-            static Digit2 TopRowToDigit(string topRow) =>
+            static Digit TopRowToDigit(string topRow) =>
                 topRow switch
                 {
-                    " _ " => Digit2.Zero + Digit2.Two + Digit2.Three + Digit2.Five +
-                             Digit2.Six + Digit2.Seven + Digit2.Eight + Digit2.Nine,
-                    "   " => Digit2.One + Digit2.Four,
+                    " _ " => Digit.Zero + Digit.Two + Digit.Three + Digit.Five +
+                             Digit.Six + Digit.Seven + Digit.Eight + Digit.Nine,
+                    "   " => Digit.One + Digit.Four,
                     _ => throw new ArgumentException($"{nameof(topRow)} contans an invalid pattern: '{topRow}'")
                 };
 
-            static Digit2 MiddleRowToDigit(string middleRow) =>
+            static Digit MiddleRowToDigit(string middleRow) =>
                 middleRow switch
                 {
-                    "| |" => Digit2.Zero,
-                    "  |" => Digit2.One + Digit2.Seven,
-                    " _|" => Digit2.Two + Digit2.Three,
-                    "|_|" => Digit2.Four + Digit2.Eight + Digit2.Nine,
-                    "|_ " => Digit2.Five + Digit2.Six,
+                    "| |" => Digit.Zero,
+                    "  |" => Digit.One + Digit.Seven,
+                    " _|" => Digit.Two + Digit.Three,
+                    "|_|" => Digit.Four + Digit.Eight + Digit.Nine,
+                    "|_ " => Digit.Five + Digit.Six,
                     _ => throw new ArgumentException($"{nameof(middleRow)} contans an invalid pattern: '{middleRow}'")
                 };
 
-            static Digit2 BottomRowToDigit(string bottomRow) =>
+            static Digit BottomRowToDigit(string bottomRow) =>
                 bottomRow switch
                 {
-                    "|_|" => Digit2.Zero + Digit2.Six + Digit2.Eight,
-                    "  |" => Digit2.One + Digit2.Four + Digit2.Seven,
-                    "|_ " => Digit2.Two,
-                    " _|" => Digit2.Three + Digit2.Five + Digit2.Nine,
+                    "|_|" => Digit.Zero + Digit.Six + Digit.Eight,
+                    "  |" => Digit.One + Digit.Four + Digit.Seven,
+                    "|_ " => Digit.Two,
+                    " _|" => Digit.Three + Digit.Five + Digit.Nine,
                     _ => throw new ArgumentException($"{nameof(bottomRow)} contans an invalid pattern: '{bottomRow}'")
                 };
         }
