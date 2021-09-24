@@ -84,7 +84,7 @@ namespace BankOcr.Cli
                     " _ " => Digit.Zero + Digit.Two + Digit.Three + Digit.Five +
                              Digit.Six + Digit.Seven + Digit.Eight + Digit.Nine,
                     "   " => Digit.One + Digit.Four,
-                    _ => throw new ArgumentException($"{nameof(topRow)} contans an invalid pattern: '{topRow}'")
+                    _ => throw new ArgumentException($"Invalid pattern [{topRow}]", nameof(topRow))
                 };
 
             static Digit MiddleRowToDigit(string middleRow) =>
@@ -95,7 +95,7 @@ namespace BankOcr.Cli
                     " _|" => Digit.Two + Digit.Three,
                     "|_|" => Digit.Four + Digit.Eight + Digit.Nine,
                     "|_ " => Digit.Five + Digit.Six,
-                    _ => throw new ArgumentException($"{nameof(middleRow)} contans an invalid pattern: '{middleRow}'")
+                    _ => throw new ArgumentException($"Invalid pattern [{middleRow}]", nameof(middleRow))
                 };
 
             static Digit BottomRowToDigit(string bottomRow) =>
@@ -105,7 +105,7 @@ namespace BankOcr.Cli
                     "  |" => Digit.One + Digit.Four + Digit.Seven,
                     "|_ " => Digit.Two,
                     " _|" => Digit.Three + Digit.Five + Digit.Nine,
-                    _ => throw new ArgumentException($"{nameof(bottomRow)} contans an invalid pattern: '{bottomRow}'")
+                    _ => throw new ArgumentException($"Invalid pattern [{bottomRow}]", nameof(bottomRow))
                 };
         }
 
