@@ -4,34 +4,17 @@ using System.Linq;
 
 namespace BankOcr.Domain
 {
-    public readonly struct Digit
+    public readonly struct DigitBuilder
     {
         private readonly char value;
-        public static implicit operator char(Digit digit) => digit.value;
 
-        private Digit(char value) => this.value = value;
+        private DigitBuilder(char value) => this.value = value;
 
-        public static Digit FromChar(char c) =>
+        public static DigitBuilder FromChar(char c) =>
             c switch
             {
-                >= '0' and <= '9' => new Digit(c),
+                >= '0' and <= '9' => new DigitBuilder(c),
                 _ => throw new NotImplementedException("Invalid char"),
-            };
-
-        public static Digit FromString(string s) =>
-            s switch
-            {
-                Zero => new Digit('0'),
-                One => new Digit('1'),
-                Two => new Digit('2'),
-                Three => new Digit('3'),
-                Four => new Digit('4'),
-                Five => new Digit('5'),
-                Six => new Digit('6'),
-                Seven => new Digit('7'),
-                Eight => new Digit('8'),
-                Nine => new Digit('9'),
-                _ => throw new NotImplementedException("Invalid string"),
             };
 
         public const string Zero =
@@ -75,7 +58,7 @@ namespace BankOcr.Domain
             "|_|" +
             " _|";
 
-        public static string Top(Digit d) =>
+        public static string Top(DigitBuilder d) =>
             d.value switch
             {
                 '0' => Zero[0..3],
@@ -91,7 +74,7 @@ namespace BankOcr.Domain
                 _ => throw new InvalidOperationException("Digit object is not valid")
             };
 
-        public static string Middle(Digit d) =>
+        public static string Middle(DigitBuilder d) =>
             d.value switch
             {
                 '0' => Zero[3..6],
@@ -107,7 +90,7 @@ namespace BankOcr.Domain
                 _ => throw new InvalidOperationException("Digit object is not valid")
             };
 
-        public static string Bottom(Digit d) =>
+        public static string Bottom(DigitBuilder d) =>
             d.value switch
             {
                 '0' => Zero[6..9],
@@ -122,8 +105,6 @@ namespace BankOcr.Domain
                 '9' => Nine[6..9],
                 _ => throw new InvalidOperationException("Digit object is not valid")
             };
-
-        public override string ToString() => value.ToString();
     }
 
     public struct Digit2
@@ -146,7 +127,6 @@ namespace BankOcr.Domain
         DigitMask mask { get; init; }
 
         public static Digit2 operator +(Digit2 lhs, Digit2 rhs) => new Digit2 { mask = lhs.mask | rhs.mask };
-        public static Digit2 operator -(Digit2 lhs, Digit2 rhs) => new Digit2 { mask = lhs.mask & ~rhs.mask };
 
         public static Digit2 operator *(Digit2 lhs, Digit2 rhs) => new Digit2 { mask = lhs.mask & rhs.mask };
 
@@ -175,7 +155,7 @@ namespace BankOcr.Domain
         public static Digit2 Six = new Digit2 { mask = DigitMask.Six };
         public static Digit2 Seven = new Digit2 { mask = DigitMask.Seven };
         public static Digit2 Eight = new Digit2 { mask = DigitMask.Eight };
-        public static Digit2 Nine = new Digit2 { mask = DigitMask.Nine };
+        public static Digit2 Nine = new Digit2 { mask = DigitMask.Nine }; 
         public static Digit2 All = new Digit2 { mask = DigitMask.All };
     }
 

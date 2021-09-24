@@ -86,22 +86,22 @@ namespace BankOcr.Cli.Tests
                 .ToDigits()
                 .TextLines();
 
-        private static IEnumerable<Digit> ToDigits(this string accountNumber) =>
+        private static IEnumerable<DigitBuilder> ToDigits(this string accountNumber) =>
             accountNumber
                 .AsEnumerable()
-                .Select(Digit.FromChar);
+                .Select(DigitBuilder.FromChar);
 
-        private static IEnumerable<string> TextLines(this IEnumerable<Digit> digits)
+        private static IEnumerable<string> TextLines(this IEnumerable<DigitBuilder> digits)
         {
             const char Delimiter = ' ';
 
-            yield return digits.ConcatDigits(Digit.Top, Delimiter);
-            yield return digits.ConcatDigits(Digit.Middle, Delimiter);
-            yield return digits.ConcatDigits(Digit.Bottom, Delimiter);
+            yield return digits.ConcatDigits(DigitBuilder.Top, Delimiter);
+            yield return digits.ConcatDigits(DigitBuilder.Middle, Delimiter);
+            yield return digits.ConcatDigits(DigitBuilder.Bottom, Delimiter);
             yield return "";
         }
 
-        private static string ConcatDigits(this IEnumerable<Digit> digit, Func<Digit, string> func, char delimiter) =>
+        private static string ConcatDigits(this IEnumerable<DigitBuilder> digit, Func<DigitBuilder, string> func, char delimiter) =>
             digit
                 .Select(func)
                 .Concat(delimiter);
