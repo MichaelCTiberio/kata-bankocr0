@@ -83,15 +83,9 @@ namespace BankOcr.Cli.Tests
     {
         public static IEnumerable<string> AccountLinesFromAccountNumber(string accountNumber) =>
             accountNumber
-                .ToDigits()
                 .TextLines();
 
-        private static IEnumerable<DigitBuilder> ToDigits(this string accountNumber) =>
-            accountNumber
-                .AsEnumerable()
-                .Select(DigitBuilder.FromChar);
-
-        private static IEnumerable<string> TextLines(this IEnumerable<DigitBuilder> digits)
+        private static IEnumerable<string> TextLines(this string digits)
         {
             const char Delimiter = ' ';
 
@@ -101,7 +95,7 @@ namespace BankOcr.Cli.Tests
             yield return "";
         }
 
-        private static string ConcatDigits(this IEnumerable<DigitBuilder> digit, Func<DigitBuilder, string> func, char delimiter) =>
+        private static string ConcatDigits(this string digit, Func<char, string> func, char delimiter) =>
             digit
                 .Select(func)
                 .Concat(delimiter);
@@ -110,5 +104,97 @@ namespace BankOcr.Cli.Tests
             (new StringBuilder())
                 .AppendJoin(delimiter, strings)
                 .ToString();
+
+        private static class DigitBuilder
+        {
+            private const string ZeroTop = " _ ";
+            private const string ZeroMid = "| |";
+            private const string ZeroBot = "|_|";
+
+            private const string OneTop = "   ";
+            private const string OneMid = "  |";
+            private const string OneBot = "  |";
+
+            private const string TwoTop = " _ ";
+            private const string TwoMid = " _|";
+            private const string TwoBot = "|_ ";
+
+            private const string ThreeTop = " _ ";
+            private const string ThreeMid = " _|";
+            private const string ThreeBot = " _|";
+
+            private const string FourTop = "   ";
+            private const string FourMid = "|_|";
+            private const string FourBot = "  |";
+
+            private const string FiveTop = " _ ";
+            private const string FiveMid = "|_ ";
+            private const string FiveBot = " _|";
+
+            private const string SixTop = " _ ";
+            private const string SixMid = "|_ ";
+            private const string SixBot = "|_|";
+
+            private const string SevenTop = " _ ";
+            private const string SevenMid = "  |";
+            private const string SevenBot = "  |";
+
+            private const string EightTop = " _ ";
+            private const string EightMid = "|_|";
+            private const string EightBot = "|_|";
+
+            private const string NineTop = " _ ";
+            private const string NineMid = "|_|";
+            private const string NineBot = " _|";
+
+
+            public static string Top(char d) =>
+                d switch
+                {
+                    '0' => ZeroTop,
+                    '1' => OneTop,
+                    '2' => TwoTop,
+                    '3' => ThreeTop,
+                    '4' => FourTop,
+                    '5' => FiveTop,
+                    '6' => SixTop,
+                    '7' => SevenTop,
+                    '8' => EightTop,
+                    '9' => NineTop,
+                    _ => throw new ArgumentException("Invalid input", nameof(d))
+                };
+
+            public static string Middle(char d) =>
+                d switch
+                {
+                    '0' => ZeroMid,
+                    '1' => OneMid,
+                    '2' => TwoMid,
+                    '3' => ThreeMid,
+                    '4' => FourMid,
+                    '5' => FiveMid,
+                    '6' => SixMid,
+                    '7' => SevenMid,
+                    '8' => EightMid,
+                    '9' => NineMid,
+                    _ => throw new ArgumentException("Invalid input", nameof(d))
+                };
+
+            public static string Bottom(char d) =>
+                d switch
+                {
+                    '0' => ZeroBot,
+                    '1' => OneBot,
+                    '2' => TwoBot,
+                    '3' => ThreeBot,
+                    '4' => FourBot,
+                    '5' => FiveBot,
+                    '6' => SixBot,
+                    '7' => SevenBot,
+                    '8' => EightBot,
+                    '9' => NineBot,
+                    _ => throw new ArgumentException("Invalid input", nameof(d))
+                };
+        }
     }
 }
