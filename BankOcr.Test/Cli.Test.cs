@@ -74,12 +74,12 @@ namespace BankOcr.Cli.Tests
             var accounts = Program.AccountNumbersFromTextLines(lines);
 
             Assert.Single(accounts);
-            string actual = accounts.First().Number;
+            string actual = accounts.First().Number();
             Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void ShouldHandleEmptyFile()
+        public void ShouldHandleNoAccountNumbers()
         {
             var lines = EmptyEnumerable();
             var accounts = Program.AccountNumbersFromTextLines(lines);
@@ -91,10 +91,34 @@ namespace BankOcr.Cli.Tests
                 yield break;
             }
         }
+
+        [Fact]
+        public void Shouldhandle1000AccountNumbers()
+        {
+            var expected = TestLib.GenerateAccountNumbers(1000);
+            var lines = TestLib.AccountLinesForAccountNumbers(expected);
+            var accounts = Program.AccountNumbersFromTextLines(lines);
+
+            var actual = accounts.Select(AccountHelpers.Number);
+            Assert.Equal(expected, actual);
+        }
     }
 
     public static class TestLib
     {
+        public static IEnumerable<string> GenerateAccountNumbers(int count)
+        {
+            for (int n = 0; n < count; n++)
+                yield return (n * 1000).ToString("000000000");
+        }
+
+        public static IEnumerable<string> AccountLinesForAccountNumbers(IEnumerable<string> accountNumbers)
+        {
+            foreach (var accountNumber in accountNumbers)
+                foreach (var line in AccountLinesFromAccountNumber(accountNumber))
+                    yield return line;
+        }
+
         public static IEnumerable<string> AccountLinesFromAccountNumber(string accountNumber) =>
             accountNumber
                 .TextLines();

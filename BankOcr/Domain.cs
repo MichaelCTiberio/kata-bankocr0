@@ -72,5 +72,7 @@ namespace BankOcr.Domain
             {
                 Number = (new System.Text.StringBuilder()).AppendJoin("", digits.Select(digit => (char) digit)).ToString()
             };
+
+        public static string Number(this Account account) => account.Number;
     }
 }
