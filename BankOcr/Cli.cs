@@ -69,7 +69,7 @@ namespace BankOcr.Cli
                 enlines.Next();
         }
 
-        public static IEnumerable<Digit> GetNineDigits(string top, string middle, string bottom)
+        private static IEnumerable<Digit> GetNineDigits(string top, string middle, string bottom)
         {
             for (int i = 0; i < 9; i++)
             {
@@ -84,7 +84,7 @@ namespace BankOcr.Cli
                     .Aggregate(Digit.All, (accumulator, digit) => accumulator * digit);
             }
 
-            static int OffsetFromIndex(int index) => index * 4;
+            static int OffsetFromIndex(int index) => index * 3;
             static string ThreeCharsAt(string s, int offset) => s.Substring(offset, 3);
             static Digit MapRowToDigit((string row, Func<string, Digit> rowToDigit) pair) => pair.rowToDigit(pair.row);
 

@@ -101,22 +101,20 @@ namespace BankOcr.Cli.Tests
 
         private static IEnumerable<string> TextLines(this string digits)
         {
-            const char Delimiter = ' ';
-
-            yield return digits.ConcatDigits(DigitBuilder.Top, Delimiter);
-            yield return digits.ConcatDigits(DigitBuilder.Middle, Delimiter);
-            yield return digits.ConcatDigits(DigitBuilder.Bottom, Delimiter);
+            yield return digits.ConcatDigits(DigitBuilder.Top);
+            yield return digits.ConcatDigits(DigitBuilder.Middle);
+            yield return digits.ConcatDigits(DigitBuilder.Bottom);
             yield return "";
         }
 
-        private static string ConcatDigits(this string digit, Func<char, string> func, char delimiter) =>
+        private static string ConcatDigits(this string digit, Func<char, string> func) =>
             digit
                 .Select(func)
-                .Concat(delimiter);
+                .Concat();
 
-        private static string Concat(this IEnumerable<string> strings, char delimiter) =>
+        private static string Concat(this IEnumerable<string> strings) =>
             (new StringBuilder())
-                .AppendJoin(delimiter, strings)
+                .AppendJoin("", strings)
                 .ToString();
 
         private static class DigitBuilder
