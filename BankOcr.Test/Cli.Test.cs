@@ -77,6 +77,20 @@ namespace BankOcr.Cli.Tests
             string actual = accounts.First().Number;
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void ShouldHandleEmptyFile()
+        {
+            var lines = EmptyEnumerable();
+            var accounts = Program.AccountNumbersFromTextLines(lines);
+
+            Assert.Empty(accounts);
+
+            static IEnumerable<string> EmptyEnumerable()
+            {
+                yield break;
+            }
+        }
     }
 
     public static class TestLib

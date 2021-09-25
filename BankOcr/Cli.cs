@@ -40,23 +40,33 @@ namespace BankOcr.Cli
         {
             using var enlines = lines.GetEnumerator();
 
-            do
+            var maybeRows = GetFirstThreeRows(enlines);
+
+            if (maybeRows)
+            {
+                do
+                {
+                    yield return GetNineDigits(maybeRows.Value.Top, maybeRows.Value.Middle, maybeRows.Value.Bottom).FromDigits();
+                } while (maybeRows = GetNextThreeRows(enlines));
+            }
+
+            static Maybe<(string Top, string Middle, string Bottom)> GetFirstThreeRows(IEnumerator<string> enlines)
             {
                 var maybeTop = enlines.Next();
+                if (maybeTop)
+                    return (maybeTop.Value, enlines.Next().Value, enlines.Next().Value);
+                else
+                    return Maybe<(string Top, string Middle, string Bottom)>.None;
+            }
 
-                // End of file
-                if (!maybeTop)
-                    yield break;
+            static Maybe<(string Top, string Middle, string Bottom)> GetNextThreeRows(IEnumerator<string> enlines)
+            {
+                DiscardEmptyRow(enlines);
+                return GetFirstThreeRows(enlines);
+            }
 
-                var top = maybeTop.Value;
-                var middle = enlines.Next().Value;
-                var bottom = enlines.Next().Value;
-
-                var account = GetNineDigits(top, middle, bottom).FromDigits();
-
-                yield return account;
-
-            } while (enlines.Next());
+            static void DiscardEmptyRow(IEnumerator<string> enlines) =>
+                enlines.Next();
         }
 
         public static IEnumerable<Digit> GetNineDigits(string top, string middle, string bottom)
