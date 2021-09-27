@@ -67,7 +67,7 @@ namespace BankOcr.Cli.Tests
         [InlineData("777777777")]
         [InlineData("888888888")]
         [InlineData("999999999")]
-        [InlineData("123456789")]
+        [InlineData("987654321")]
         public void ShouldGetAccountNumbersFromTextStream(string expected)
         {
             var lines = TestLib.AccountLinesFromAccountNumber(expected);
