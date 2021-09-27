@@ -1,0 +1,1 @@
+[assembly: BankOcr.Test.CommitTests]
