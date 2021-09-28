@@ -1,2 +1,2 @@
 @echo off
-dotnet test --no-build --filter "TestSuite=CommitTests" %*
+dotnet test --no-build --no-restore --filter "TestSuite=CommitTests" %*

@@ -5,7 +5,7 @@ set SCRIPT_PATH=%~dp0
 set BUILD_ROOT=%SCRIPT_PATH%..
 
 echo ^>
-echo ^> ---------- ACCEPTANCE TEST RUN ----------
+echo ^> ---------- ACCEPTANCE STAGE RUN ----------
 
 REM Set the build root directory
     echo ^>

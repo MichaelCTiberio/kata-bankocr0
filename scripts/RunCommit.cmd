@@ -5,7 +5,7 @@ set SCRIPT_PATH=%~dp0
 set BUILD_ROOT=%SCRIPT_PATH%..
 
 echo ^>
-echo ^> ---------- COMMIT TEST RUN ----------
+echo ^> ---------- COMMIT STAGE RUN ----------
 
 REM Set the build root directory
     echo ^>
@@ -32,6 +32,13 @@ REM Run the commit tests
     echo ^>
     echo ^> call %SCRIPT_PATH%CommitTests.cmd
     call %SCRIPT_PATH%CommitTests.cmd
+    if errorlevel 1 exit /b 1
+    echo ^>
+
+REM Publish the binaries
+    echo ^>
+    echo ^> call %SCRIPT_PATH%Publish.cmd
+    call %SCRIPT_PATH%Publish.cmd
     if errorlevel 1 exit /b 1
     echo ^>
 
