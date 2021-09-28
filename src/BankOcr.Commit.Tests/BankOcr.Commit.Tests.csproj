@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\bankocr\bankocr.csproj" />
+    <ProjectReference Include="..\BankOcr\BankOcr.csproj" />
     <ProjectReference Include="..\MctLib\MctLib.csproj" />
   </ItemGroup>
 
