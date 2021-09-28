@@ -3,12 +3,12 @@ using Xunit.Sdk;
 using Xunit.Abstractions;
 using System.Collections.Generic;
 
-namespace BankOcr.Test
+namespace MctLib.XunitAttributes
 {
     internal static class SupportConstants
     {
-        internal const string AssemblyName = "BankOcr.Test";
-        internal const string NamespacePrefix = "BankOcr.Test" + ".";
+        internal const string AssemblyName = "MctLib";
+        internal const string NamespacePrefix = "MctLib.XunitAttributes" + ".";
 
         internal const string TestSuite = "TestSuite";
         internal const string AcceptanceTest = "AcceptanceTests";

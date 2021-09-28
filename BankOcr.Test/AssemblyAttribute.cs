@@ -1,1 +1,1 @@
-[assembly: BankOcr.Test.CommitTests]
+[assembly: MctLib.XunitAttributes.CommitTests]

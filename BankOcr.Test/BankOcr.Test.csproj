@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\bankocr\bankocr.csproj" />
+    <ProjectReference Include="..\MctLib\MctLib.csproj" />
   </ItemGroup>
 
 </Project>
