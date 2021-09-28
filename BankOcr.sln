@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOcr", "BankOcr\BankOcr.csproj", "{04A36572-67B9-47DF-9BB5-76BCCD2D2621}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOcr", "src\BankOcr\BankOcr.csproj", "{04A36572-67B9-47DF-9BB5-76BCCD2D2621}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOcr.Test", "BankOcr.Test\BankOcr.Test.csproj", "{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOcr.Test", "src\BankOcr.Test\BankOcr.Test.csproj", "{C0CB2CE3-B4C9-42DC-9BF6-88129400546E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MctLib", "MctLib\MctLib.csproj", "{60F3FDED-FBD6-4103-AF32-8B0D82A12105}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MctLib", "src\MctLib\MctLib.csproj", "{60F3FDED-FBD6-4103-AF32-8B0D82A12105}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
