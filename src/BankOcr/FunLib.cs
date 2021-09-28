@@ -78,7 +78,7 @@ namespace FunLib
 
     public static class Fn
     {
-        public static Maybe<T> MaybeIs<T>(this object obj)
+        public static Maybe<T> MaybeTypeIs<T>(this object obj)
         {
             if (obj is T output)
                 return output;
@@ -108,7 +108,7 @@ namespace FunLib
             where TException : Exception =>
             (Exception exception) =>
             {
-                var maybeException = exception.MaybeIs<TException>();
+                var maybeException = exception.MaybeTypeIs<TException>();
                 return maybeException ?
                     handler((TException) maybeException) :
                     false;

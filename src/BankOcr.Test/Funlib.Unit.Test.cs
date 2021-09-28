@@ -10,7 +10,7 @@ namespace FunLib.Tests
         {
             Exception ex = new NullReferenceException();
 
-            var hasEx = ex.MaybeIs<NullReferenceException>();
+            var hasEx = ex.MaybeTypeIs<NullReferenceException>();
 
             Assert.True(hasEx.HasValue());
         }
@@ -20,7 +20,7 @@ namespace FunLib.Tests
         {
             Exception ex = new NullReferenceException();
 
-            var noEx = ex.MaybeIs<InvalidOperationException>();
+            var noEx = ex.MaybeTypeIs<InvalidOperationException>();
 
             Assert.False(noEx.HasValue());
         }
