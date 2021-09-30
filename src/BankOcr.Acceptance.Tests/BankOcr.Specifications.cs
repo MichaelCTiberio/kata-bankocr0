@@ -1,14 +1,34 @@
-using System;
+using System.IO;
 using Xunit;
+using System;
 
-namespace BankOcr.Acceptance.Tests
+using static System.Environment;
+
+namespace BankOcr.Tests.Specifications
 {
-    public class UnitTest1
+    public class BankOcrSpecifications
     {
         [Fact]
-        public void Test1()
+        public void BankOcrExeShouldBeDeployed()
         {
-            Assert.True(true);
+            BankOcrRunner runner = new ();
         }
+    }
+
+    internal sealed class BankOcrRunner
+    {
+        public string BankOcrFullPath { get; init; }
+
+        public BankOcrRunner()
+        {
+            string path = GetEnvironmentVariable(EnvInstallDir) ?? @".\";
+            BankOcrFullPath = Path.GetFullPath(Path.Join(path, BankOcrExe));
+
+            if (!File.Exists(BankOcrFullPath))
+                throw new FileNotFoundException($"Could not find {BankOcrFullPath}", BankOcrFullPath);
+        }
+
+        private const string BankOcrExe = "BankOcr.exe";
+        private const string EnvInstallDir = "INSTALL_DIR";
     }
 }
