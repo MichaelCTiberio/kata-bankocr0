@@ -1,8 +1,17 @@
 <Project>
 
   <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+
     <BaseOutputPath>$(MSBuildThisFileDirectory)/bld/bin/$(MSBuildProjectName)</BaseOutputPath>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)/bld/obj/$(MSBuildProjectName)</BaseIntermediateOutputPath>
+
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <IsPublishable>false</IsPublishable>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
 </Project>
