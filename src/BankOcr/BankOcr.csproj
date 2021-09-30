@@ -10,4 +10,7 @@
     <PublishDir>../../pub/BankOcr</PublishDir>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Include="Deploy.cmd" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
