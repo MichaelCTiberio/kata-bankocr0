@@ -9,7 +9,7 @@ set TEST_FILTER="%COMMIT_TESTS%&%ACCEPTANCE_TESTS%"
 
 set NO_MATCH_STRING=/c:"No test matches the given testcase filter"
 
-set DOTNET_LIST_TESTS_CMD=dotnet test -t --no-build --filter %TEST_FILTER%
+set DOTNET_LIST_TESTS_CMD=dotnet test --noLogo --no-build --no-restore --list-tests --filter %TEST_FILTER%
 
 
 call %DOTNET_LIST_TESTS_CMD% | findstr %NO_MATCH_STRING% > nul

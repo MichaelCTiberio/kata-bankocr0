@@ -1,2 +1,2 @@
 @echo off
-dotnet publish --no-build --no-restore %*
+dotnet publish -noLogo --no-build --no-restore %*

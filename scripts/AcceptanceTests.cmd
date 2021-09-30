@@ -1,2 +1,2 @@
 @echo off
-dotnet test --no-build --no-restore --filter "TestSuite=AcceptanceTests" %*
+dotnet test --noLogo --no-build --no-restore --filter "TestSuite=AcceptanceTests" %*
