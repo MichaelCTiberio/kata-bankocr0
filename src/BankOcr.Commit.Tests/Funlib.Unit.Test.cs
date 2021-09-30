@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace FunLib.Tests
+namespace FunLib.Tests.Unit
 {
     public class FnTests
     {

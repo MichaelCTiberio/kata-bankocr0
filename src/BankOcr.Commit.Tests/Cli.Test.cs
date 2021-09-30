@@ -1,3 +1,4 @@
+using BankOcr.Cli;
 using BankOcr.Domain;
 using FunLib;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace BankOcr.Cli.Tests
+namespace BankOcr.Tests.Unit.Cli
 {
     public class FileReaderTests
     {
