@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOcr.Commit.Tests", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MctLib", "src\MctLib\MctLib.csproj", "{60F3FDED-FBD6-4103-AF32-8B0D82A12105}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ABDED59B-D6C5-4DE9-93AC-C2C5BFF7D799}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOcr.Acceptance.Tests", "src\BankOcr.Acceptance.Tests\BankOcr.Acceptance.Tests.csproj", "{68E6E885-F00B-4863-9BCB-31A0D8AF5634}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +62,20 @@ Global
 		{60F3FDED-FBD6-4103-AF32-8B0D82A12105}.Release|x64.Build.0 = Release|Any CPU
 		{60F3FDED-FBD6-4103-AF32-8B0D82A12105}.Release|x86.ActiveCfg = Release|Any CPU
 		{60F3FDED-FBD6-4103-AF32-8B0D82A12105}.Release|x86.Build.0 = Release|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Debug|x64.Build.0 = Debug|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Debug|x86.Build.0 = Debug|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Release|x64.ActiveCfg = Release|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Release|x64.Build.0 = Release|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Release|x86.ActiveCfg = Release|Any CPU
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{68E6E885-F00B-4863-9BCB-31A0D8AF5634} = {ABDED59B-D6C5-4DE9-93AC-C2C5BFF7D799}
 	EndGlobalSection
 EndGlobal

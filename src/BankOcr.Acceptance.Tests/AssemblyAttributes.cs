@@ -1,0 +1,1 @@
+[assembly: MctLib.XunitAttributes.AcceptanceTests]
