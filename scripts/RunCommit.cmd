@@ -2,7 +2,7 @@
 setlocal
 
 set SCRIPT_PATH=%~dp0
-set BUILD_ROOT=%SCRIPT_PATH%..
+set BUILD_ROOT=%SCRIPT_PATH%..\
 
 echo ^>
 echo ^> ---------- COMMIT STAGE RUN ----------
@@ -25,11 +25,10 @@ REM Verify the test categories
 REM Run the commit tests
     call %SCRIPT_PATH%Task.cmd %SCRIPT_PATH%CommitTests.cmd
     if errorlevel 1 exit /b 1
-    echo ^>
 
 REM Publish the binaries
     call %SCRIPT_PATH%Task.cmd  %SCRIPT_PATH%Publish.cmd
     if errorlevel 1 exit /b 1
-    echo ^>
 
+echo ^>
 endlocal
