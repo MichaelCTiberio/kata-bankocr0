@@ -6,13 +6,13 @@ namespace FunLib
 {
     public readonly struct Maybe<T>
     {
-        private readonly T _value;
+        private readonly T? _value;
 
         public T Value
         {
             readonly get
             {
-                if (!hasValue)
+                if (!hasValue || _value == null)
                     throw new InvalidOperationException($"{nameof(Maybe<T>)} does not contain a value");
 
                 return _value;
@@ -26,7 +26,7 @@ namespace FunLib
         private readonly bool hasValue;
         public static implicit operator bool(Maybe<T> maybe) => maybe.hasValue;
 
-        private Maybe(T value, bool hasValue)
+        private Maybe(T? value, bool hasValue)
         {
             this._value = value;
             this.hasValue = hasValue;
@@ -50,8 +50,11 @@ namespace FunLib
                 maybeFunc.Value(Value) :
                 Maybe<TReturn>.None;
 
+        private const string EmptyString = "<empty>";
         public override string ToString() =>
-            (hasValue) ? Value.ToString() : "<empty>";
+            (hasValue) ?
+                Value?.ToString() ?? EmptyString :
+                EmptyString;
     }
 
     public static class MaybeHelpers

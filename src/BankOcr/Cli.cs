@@ -11,7 +11,7 @@ namespace BankOcr.Cli
     {
         private static IEnumerable<string> LinesEnumerable(TextReader reader)
         {
-            string line;
+            string? line;
             while ((line = reader.ReadLine()) != null)
                 yield return line;
         }

@@ -1,2 +1,2 @@
 @echo off
-dotnet build %*
+dotnet build -warnAsError %*
