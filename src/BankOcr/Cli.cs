@@ -119,12 +119,15 @@ namespace BankOcr.Cli
                 };
         }
 
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             // User Story 1: args -> displayed list of account numbers
 
             // * args -> filename
             var maybeFilename = FilenameFromArgs(args, HandleNoFilename);
+
+            if (!maybeFilename)
+                return 1;
 
             // * filename -> enumeration of text lines
 
@@ -132,6 +135,7 @@ namespace BankOcr.Cli
 
             // * display account numbers
 
+            return 0;
         }
     }
 }

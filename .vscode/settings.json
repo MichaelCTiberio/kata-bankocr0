@@ -1,0 +1,9 @@
+{
+    "csharp.unitTestDebuggingOptions": {
+        // Needed for the acceptance tests to run.
+        // scripts\Deploy.cmd places the BankOcr.exe file in the install directory.
+        "env": {
+            "INSTALL_DIR": "${workspaceFolder}\\AcceptanceTests\\BankOcrInstall\\",
+        }
+    }
+}
