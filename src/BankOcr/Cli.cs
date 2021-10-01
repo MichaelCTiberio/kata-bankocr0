@@ -32,7 +32,7 @@ namespace BankOcr.Cli
 
         public static Maybe<string> FilenameFromArgs(string[] args, Func<IndexOutOfRangeException, bool> handler) =>
             Fn.Try<string>(
-                () => args[0],
+                () => Path.GetFullPath(args[0]),
                 Fn.Handler<IndexOutOfRangeException>(handler)
             );
 

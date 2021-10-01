@@ -37,7 +37,7 @@ namespace BankOcr.Tests.Unit.Cli
         [Fact]
         public void FilenameFromArgsShouldSucceed()
         {
-            string expected = "file path";
+            string expected = @"c:\path\to\some\file";
             Func<IndexOutOfRangeException, bool> handler =
                 Fn.Handler<IndexOutOfRangeException>(
                     (ex) => throw new InvalidOperationException("Could not find file name."));
