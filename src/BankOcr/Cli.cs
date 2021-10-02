@@ -50,10 +50,9 @@ namespace BankOcr.Cli
             static Maybe<(string Top, string Middle, string Bottom)> GetFirstThreeRows(IEnumerator<string> enlines)
             {
                 var maybeTop = enlines.Next();
-                if (maybeTop)
-                    return (maybeTop.Value, enlines.Next().Value, enlines.Next().Value);
-                else
-                    return Maybe<(string Top, string Middle, string Bottom)>.None;
+                return maybeTop ?
+                    (maybeTop.Value, enlines.Next().Value, enlines.Next().Value) :
+                    Maybe<(string Top, string Middle, string Bottom)>.None;
             }
 
             static Maybe<(string Top, string Middle, string Bottom)> GetNextThreeRows(IEnumerator<string> enlines)
