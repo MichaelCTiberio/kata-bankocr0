@@ -41,13 +41,10 @@ namespace BankOcr.Cli
             using var enlines = lines.GetEnumerator();
 
             var maybeRows = GetFirstThreeRows(enlines);
-
-            if (maybeRows)
+            while (maybeRows)
             {
-                do
-                {
-                    yield return GetNineDigits(maybeRows.Value.Top, maybeRows.Value.Middle, maybeRows.Value.Bottom).FromDigits();
-                } while (maybeRows = GetNextThreeRows(enlines));
+                yield return GetNineDigits(maybeRows.Value.Top, maybeRows.Value.Middle, maybeRows.Value.Bottom).FromDigits();
+                maybeRows = GetNextThreeRows(enlines);
             }
 
             static Maybe<(string Top, string Middle, string Bottom)> GetFirstThreeRows(IEnumerator<string> enlines)
