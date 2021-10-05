@@ -45,16 +45,42 @@ namespace FunLib
                 func(Value) :
                 Maybe<TReturn>.None;
 
-        public readonly Maybe<TReturn> Map<TReturn>(Maybe<Func<T, TReturn>> maybeFunc) =>
-            hasValue && maybeFunc.hasValue ?
-                maybeFunc.Value(Value) :
+        public readonly Maybe<TReturn> Bind<TReturn>(Func<T, Maybe<TReturn>> func) =>
+            hasValue ?
+                func(Value) :
                 Maybe<TReturn>.None;
 
-        private const string EmptyString = "<empty>";
-        public override string ToString() =>
-            (hasValue) ?
+        public readonly Maybe<T> HaveThen(Action<T> action)
+        {
+            if (hasValue)
+                action(Value);
+
+            return this;
+        }
+
+        public readonly Maybe<T> HaveThen(Action action)
+        {
+            if (hasValue)
+                action();
+
+            return this;
+        }
+
+        public readonly Maybe<T> EmptyThen(Action action)
+        {
+            if (!hasValue)
+                action();
+
+            return this;
+        }
+
+        public override string ToString()
+        {
+            const string EmptyString = "<empty>";
+            return (hasValue) ?
                 Value?.ToString() ?? EmptyString :
                 EmptyString;
+        }
     }
 
     public static class MaybeHelpers
@@ -116,6 +142,17 @@ namespace FunLib
                     handler((TException) maybeException) :
                     false;
             };
+
+        public static Func<Exception, bool> Handler<TException>(Func<bool> isHandled)
+            where TException : Exception =>
+            (Exception exception) =>
+                exception.MaybeTypeIs<TException>() ?
+                    isHandled() :
+                    false;
+
+        public static Func<Exception, bool> Handler<TException>(Action handler)
+            where TException : Exception =>
+            Handler<TException>(() => { handler(); return true; });
 
         public static T Use<TDisposable, T>(TDisposable disposable, Func<TDisposable, T> func)
             where TDisposable : IDisposable

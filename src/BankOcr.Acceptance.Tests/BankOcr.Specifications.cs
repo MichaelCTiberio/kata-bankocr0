@@ -24,6 +24,19 @@ namespace BankOcr.Tests.Specifications
             var actual = output.ToList();
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void ShouldErrorIfBogusFileSpecified()
+        {
+            string filename = @"bogus\file.txt";
+
+            (int exitCode, var output) = runner.Run(filename);
+
+            Assert.Equal(1, exitCode);
+            var expected = new List<string> { "ERROR: Could not open file." };
+            var actual = output.ToList();
+            Assert.Equal(expected, actual);
+        }
     }
 
     public sealed class BankOcrRunner

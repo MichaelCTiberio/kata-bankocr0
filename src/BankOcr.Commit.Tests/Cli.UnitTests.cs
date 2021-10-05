@@ -26,7 +26,7 @@ namespace BankOcr.Tests.Unit.Cli
             string text = string.Join("\n", expected);
 
             StringReader reader = new (text);
-            IEnumerable<string> actual = FileReader.Lines(reader).Value;
+            IEnumerable<string> actual = FileReader.Lines(reader);
 
             Assert.Equal(expected, actual);
         }
@@ -34,29 +34,6 @@ namespace BankOcr.Tests.Unit.Cli
 
     public class ProgramTests
     {
-        [Fact]
-        public void FilenameFromArgsShouldSucceed()
-        {
-            string expected = @"c:\path\to\some\file";
-            Func<IndexOutOfRangeException, bool> handler =
-                Fn.Handler<IndexOutOfRangeException>(
-                    (ex) => throw new InvalidOperationException("Could not find file name."));
-
-            var hasFilename = Program.FilenameFromArgs(new [] { expected }, handler);
-
-            Assert.True(hasFilename.HasValue());
-            string actual = hasFilename.Value;
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public void FilenameFromArgsShouldFail()
-        {
-            Func<IndexOutOfRangeException, bool> noHandler = (ex) => false;
-
-            Assert.Throws<IndexOutOfRangeException>(() => Program.FilenameFromArgs(new string[] { }, noHandler));
-        }
-
         [Theory]
         [InlineData("000000000")]
         [InlineData("111111111")]
@@ -71,8 +48,8 @@ namespace BankOcr.Tests.Unit.Cli
         [InlineData("987654321")]
         public void ShouldGetAccountNumbersFromTextStream(string expected)
         {
-            var lines = TestLib.AccountLinesFromAccountNumber(expected);
-            var accounts = Program.AccountNumbersFromTextLines(lines);
+            IEnumerable<string> lines = TestLib.AccountLinesFromAccountNumber(expected);
+            IEnumerable<Account> accounts = FileReader.ToAccounts(lines);
 
             Assert.Single(accounts);
             string actual = accounts.First().Number();
@@ -82,8 +59,8 @@ namespace BankOcr.Tests.Unit.Cli
         [Fact]
         public void ShouldHandleNoAccountNumbers()
         {
-            var lines = EmptyEnumerable();
-            var accounts = Program.AccountNumbersFromTextLines(lines);
+            IEnumerable<string> lines = EmptyEnumerable();
+            IEnumerable<Account> accounts = FileReader.ToAccounts(lines);
 
             Assert.Empty(accounts);
 
@@ -98,7 +75,7 @@ namespace BankOcr.Tests.Unit.Cli
         {
             var expected = TestLib.GenerateAccountNumbers(1000);
             var lines = TestLib.AccountLinesForAccountNumbers(expected);
-            var accounts = Program.AccountNumbersFromTextLines(lines);
+            var accounts = FileReader.ToAccounts(lines);
 
             var actual = accounts.Select(AccountHelpers.Number);
             Assert.Equal(expected, actual);
