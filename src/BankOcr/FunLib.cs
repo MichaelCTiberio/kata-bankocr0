@@ -74,12 +74,11 @@ namespace FunLib
             return this;
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
-            const string EmptyString = "<empty>";
             return (hasValue) ?
-                Value?.ToString() ?? EmptyString :
-                EmptyString;
+                Value?.ToString() :
+                "<empty>";
         }
     }
 
