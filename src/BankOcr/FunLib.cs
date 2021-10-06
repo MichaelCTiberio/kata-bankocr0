@@ -50,7 +50,7 @@ namespace FunLib
                 func(Value) :
                 Maybe<TReturn>.None;
 
-        public readonly Maybe<T> HaveThen(Action<T> action)
+        public readonly Maybe<T> HaveAction(Action<T> action)
         {
             if (hasValue)
                 action(Value);
@@ -58,7 +58,7 @@ namespace FunLib
             return this;
         }
 
-        public readonly Maybe<T> HaveThen(Action action)
+        public readonly Maybe<T> HaveAction(Action action)
         {
             if (hasValue)
                 action();
@@ -66,7 +66,7 @@ namespace FunLib
             return this;
         }
 
-        public readonly Maybe<T> EmptyThen(Action action)
+        public readonly Maybe<T> EmptyAction(Action action)
         {
             if (!hasValue)
                 action();

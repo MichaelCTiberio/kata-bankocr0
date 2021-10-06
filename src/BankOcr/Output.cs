@@ -22,8 +22,8 @@ namespace BankOcr.Cli
             const string emptyFilenameReport = "ERROR: No file name given.";
 
             return maybeFilename
-                .HaveThen((filename) => successWriter(haveFilenameReport, new [] { filename }))
-                .EmptyThen(() => failureWriter(emptyFilenameReport));
+                .HaveAction((filename) => successWriter(haveFilenameReport, new [] { filename }))
+                .EmptyAction(() => failureWriter(emptyFilenameReport));
         }
 
         public static Maybe<IEnumerable<string>> ReportOnFile(this Maybe<IEnumerable<string>> maybeLines, Writer successWriter, Writer failureWriter)
@@ -32,8 +32,8 @@ namespace BankOcr.Cli
             const string emptyLinesReport = "ERROR: Could not open file.";
 
             return maybeLines
-                .HaveThen(() => successWriter(haveLinesReport))
-                .EmptyThen(() => failureWriter(emptyLinesReport));
+                .HaveAction(() => successWriter(haveLinesReport))
+                .EmptyAction(() => failureWriter(emptyLinesReport));
         }
     }
 }
