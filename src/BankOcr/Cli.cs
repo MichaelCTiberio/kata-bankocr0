@@ -45,29 +45,21 @@ namespace BankOcr.Cli
             Writer outputWriter = WriteLineToConsole;
 
             // User Story 1: args -> displayed list of account numbers
-            Maybe<string> maybeFilename =
-                args
-                    .ToFilename()
-                    .ReportOnFilename(successWriter, failureWriter);
-
-            if (!maybeFilename)
-                return StatusError;
-
-            Maybe<IEnumerable<string>> maybeLines =
-                maybeFilename
-                    .Bind(ToLines)
-                    .ReportOnFile(successWriter, failureWriter);
-
-            if (!maybeLines)
-                return StatusError;
-
-            Maybe<IEnumerable<Account>> maybeAccounts =
-                maybeLines
-                    .Map(FileReader.ToAccounts)
-                    // * display account numbers
-                    ;
+            args
+            .ToFilename()
+            .ReportOnFilename(successWriter, failureWriter)
+            .Bind((filename) =>
+                filename
+                .ToLines()
+                .ReportOnFile(successWriter, failureWriter))
+            .Map((lines) =>
+                lines
+                .ToAccounts())
+            .EmptyAction(SetErrorStatus);
 
             return status;
+
+            void SetErrorStatus() => status = StatusError;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace BankOcr.Cli
 {
     public static class FileReader
     {
-        public static Maybe<IEnumerable<string>> ToLines(string filename)
+        public static Maybe<IEnumerable<string>> ToLines(this string filename)
         {
             return Maybe<IEnumerable<string>>.None;
         }
