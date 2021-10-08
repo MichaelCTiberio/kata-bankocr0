@@ -12,17 +12,15 @@ namespace BankOcr.Cli
     public static class Program
     {
         public static Maybe<string> ToFilename(this string[] args) =>
-            Fn.Try<string>
-            (
-                () => args[0],
-                Fn.Handler<IndexOutOfRangeException>(() => true)
-            )
-            .Bind(ToValidFilename);
-
-        public static Maybe<string> ToValidFilename(this string filename) =>
-            string.IsNullOrWhiteSpace(filename) ?
+            (args.Length == 0 ?
                 Maybe<string>.None :
-                Path.GetFullPath(filename);
+                Maybe<string>.Wrap(args[0])
+            )
+            .Bind((argument) =>
+                string.IsNullOrWhiteSpace(argument) ?
+                    Maybe<string>.None :
+                    Path.GetFullPath(argument)
+            );
 
         public static Maybe<TextReader> OpenFile(string filename, Func<bool> invalidFileNameHandler) =>
             Fn.Try<TextReader>
