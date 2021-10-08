@@ -74,12 +74,9 @@ namespace BankOcr.Tests.Specifications
 
             IEnumerable<string> StringsFromStreamReader(StreamReader sr)
             {
-                string? line = sr.ReadLine();
-                while (line is not null)
-                {
+                string? line;
+                while ((line = sr.ReadLine()) is not null)
                     yield return line;
-                    line = sr.ReadLine();
-                }
             }
         }
 
