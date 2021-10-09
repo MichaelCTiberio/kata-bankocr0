@@ -17,11 +17,11 @@ namespace BankOcr.Tests.Specifications
         [Fact]
         public void ShouldErrorIfNoFileSpecified()
         {
-            (int exitCode, var output) = runner.Run();
+            (int exitCode, IEnumerable<string> output) = runner.Run();
 
             Assert.Equal(1, exitCode);
-            var expected = new List<string> { "ERROR: No file name given." };
-            var actual = output.ToList();
+            List<string> expected = new () { "ERROR: No file name given." };
+            List<string> actual = output.ToList();
             Assert.Equal(expected, actual);
         }
 
@@ -30,11 +30,11 @@ namespace BankOcr.Tests.Specifications
         {
             string filename = @"bogus\file.txt";
 
-            (int exitCode, var output) = runner.Run(filename);
+            (int exitCode, IEnumerable<string> output) = runner.Run(filename);
 
             Assert.Equal(1, exitCode);
-            var expected = new List<string> { "ERROR: Could not open file." };
-            var actual = output.ToList();
+            List<string> expected = new () { "ERROR: Could not open file." };
+            List<string> actual = output.ToList();
             Assert.Equal(expected, actual);
         }
     }
@@ -60,7 +60,7 @@ namespace BankOcr.Tests.Specifications
             bankOcrProcess.StartInfo.UseShellExecute = false;
             bankOcrProcess.StartInfo.RedirectStandardOutput = true;
 
-            foreach (var arg in args)
+            foreach (string arg in args)
                 bankOcrProcess.StartInfo.ArgumentList.Add(arg);
 
             bool started = bankOcrProcess.Start();
