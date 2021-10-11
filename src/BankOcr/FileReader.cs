@@ -10,26 +10,14 @@ namespace BankOcr.Cli
 {
     public static class FileReader
     {
-        public static Maybe<TextReader> OpenFile(this string filename) =>
-            Fn.Try<TextReader>
+        public static Maybe<IEnumerable<string>> ToLines(this string filename) =>
+            Fn.Try<IEnumerable<string>>
             (
-                () => new StreamReader(filename),
+                () => File.ReadLines(filename),
                 Fn.Handler<Exception>(() => true)
             );
 
-        public static IEnumerable<string> ToLines(this TextReader reader)
-        {
-            return LinesEnumerable(reader);
-
-            static IEnumerable<string> LinesEnumerable(TextReader reader)
-            {
-                string? line;
-                while ((line = reader.ReadLine()) != null)
-                    yield return line;
-            }
-        }
-
-        public static IEnumerable<Account> ToAccounts(this IEnumerable<string> lines)
+        public static IEnumerable<Account> ToAccounts(IEnumerable<string> lines)
         {
             using var enlines = lines.GetEnumerator();
 
@@ -118,14 +106,14 @@ namespace BankOcr.Cli
                 .EmptyAction(() => failureWriter(emptyFilenameReport));
         }
 
-        public static Maybe<TextReader> ReportOnFile(this Maybe<TextReader> maybeReader, Writer successWriter, Writer failureWriter)
+        public static Maybe<IEnumerable<string>> ReportOnFile(this Maybe<IEnumerable<string>> maybeLines, Writer successWriter, Writer failureWriter)
         {
-            const string haveReaderReport = "File opened.";
-            const string emptyReaderReport = "ERROR: Could not open file.";
+            const string haveLinesReport = "File opened.";
+            const string emptyLinesReport = "ERROR: Could not open file.";
 
-            return maybeReader
-                .HaveAction(() => successWriter(haveReaderReport))
-                .EmptyAction(() => failureWriter(emptyReaderReport));
+            return maybeLines
+                .HaveAction(() => successWriter(haveLinesReport))
+                .EmptyAction(() => failureWriter(emptyLinesReport));
         }
     }
 }

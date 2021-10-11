@@ -10,28 +10,6 @@ using Xunit;
 
 namespace BankOcr.Tests.Unit.Cli
 {
-    public class FileReaderTests
-    {
-        [Fact]
-        public void ShouldEnumerateLines()
-        {
-            List<string> expected = new ()
-            {
-                "This is a bunch",
-                "Of multi line text",
-                "That we can use",
-                "In a test.",
-            };
-
-            string text = string.Join("\n", expected);
-
-            StringReader reader = new (text);
-            IEnumerable<string> actual = FileReader.ToLines(reader);
-
-            Assert.Equal(expected, actual);
-        }
-    }
-
     public class ProgramTests
     {
         [Theory]

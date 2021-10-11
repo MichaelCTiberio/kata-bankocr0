@@ -39,12 +39,9 @@ namespace BankOcr.Cli
             .ReportOnFilename(successWriter, failureWriter)
             .Bind((filename) =>
                 filename
-                .OpenFile()
-                .ReportOnFile(successWriter, failureWriter))
-            .Map((reader) =>
-                reader
                 .ToLines()
-                .ToAccounts())
+                .ReportOnFile(successWriter, failureWriter))
+            .Map(ToAccounts)
             .EmptyAction(SetErrorStatus);
 
             return status;
