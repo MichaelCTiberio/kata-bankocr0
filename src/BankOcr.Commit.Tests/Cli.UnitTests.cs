@@ -26,7 +26,7 @@ namespace BankOcr.Tests.Unit.Cli
             string text = string.Join("\n", expected);
 
             StringReader reader = new (text);
-            IEnumerable<string> actual = FileReader.Lines(reader);
+            IEnumerable<string> actual = FileReader.ToLines(reader);
 
             Assert.Equal(expected, actual);
         }

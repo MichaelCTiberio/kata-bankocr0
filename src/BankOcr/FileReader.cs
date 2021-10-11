@@ -4,17 +4,20 @@ using System.IO;
 using System.Linq;
 using BankOcr.Domain;
 using FunLib;
+using static BankOcr.Cli.Output;
 
 namespace BankOcr.Cli
 {
     public static class FileReader
     {
-        public static Maybe<IEnumerable<string>> ToLines(this string filename)
-        {
-            return Maybe<IEnumerable<string>>.None;
-        }
+        public static Maybe<TextReader> OpenFile(this string filename) =>
+            Fn.Try<TextReader>
+            (
+                () => new StreamReader(filename),
+                Fn.Handler<Exception>(() => true)
+            );
 
-        public static IEnumerable<string> Lines(TextReader reader)
+        public static IEnumerable<string> ToLines(this TextReader reader)
         {
             return LinesEnumerable(reader);
 
@@ -103,6 +106,26 @@ namespace BankOcr.Cli
                         _ => throw new ArgumentException($"Invalid pattern [{bottomRow}]", nameof(bottomRow))
                     };
             }
+        }
+
+        public static Maybe<string> ReportOnFilename(this Maybe<string> maybeFilename, Writer successWriter, Writer failureWriter)
+        {
+            const string haveFilenameReport = "Attempting to read file: {0}";
+            const string emptyFilenameReport = "ERROR: No file name given.";
+
+            return maybeFilename
+                .HaveAction((filename) => successWriter(haveFilenameReport, new [] { filename }))
+                .EmptyAction(() => failureWriter(emptyFilenameReport));
+        }
+
+        public static Maybe<TextReader> ReportOnFile(this Maybe<TextReader> maybeReader, Writer successWriter, Writer failureWriter)
+        {
+            const string haveReaderReport = "File opened.";
+            const string emptyReaderReport = "ERROR: Could not open file.";
+
+            return maybeReader
+                .HaveAction(() => successWriter(haveReaderReport))
+                .EmptyAction(() => failureWriter(emptyReaderReport));
         }
     }
 }

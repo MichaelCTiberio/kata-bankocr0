@@ -22,15 +22,6 @@ namespace BankOcr.Cli
                     Path.GetFullPath(argument)
             );
 
-        public static Maybe<TextReader> OpenFile(string filename, Func<bool> invalidFileNameHandler) =>
-            Fn.Try<TextReader>
-            (
-                () => new StreamReader(filename),
-                Fn.Handler<FileNotFoundException>(invalidFileNameHandler),
-                Fn.Handler<DirectoryNotFoundException>(invalidFileNameHandler),
-                Fn.Handler<IOException>(invalidFileNameHandler)
-            );
-
         public static int Main(string[] args)
         {
             const int StatusSuccess = 0;
@@ -48,10 +39,11 @@ namespace BankOcr.Cli
             .ReportOnFilename(successWriter, failureWriter)
             .Bind((filename) =>
                 filename
-                .ToLines()
+                .OpenFile()
                 .ReportOnFile(successWriter, failureWriter))
-            .Map((lines) =>
-                lines
+            .Map((reader) =>
+                reader
+                .ToLines()
                 .ToAccounts())
             .EmptyAction(SetErrorStatus);
 

@@ -37,6 +37,17 @@ namespace BankOcr.Tests.Specifications
             List<string> actual = output.ToList();
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void ShouldSucceedWithEmptyFile()
+        {
+            string filename = Path.GetFullPath(Path.Join(@"TestResources", @"EmptyFile.txt"));
+
+            (int exitCode, IEnumerable<string> output) = runner.Run(filename);
+
+            Assert.Equal(0, exitCode);
+            Assert.Empty(output);
+        }
     }
 
     public sealed class BankOcrRunner

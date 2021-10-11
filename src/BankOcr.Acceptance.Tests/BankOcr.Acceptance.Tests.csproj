@@ -23,4 +23,8 @@
     <ProjectReference Include="..\MctLib\MctLib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="TestResources\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
