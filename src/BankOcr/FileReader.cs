@@ -57,7 +57,7 @@ namespace BankOcr.Cli
                     yield return maybeStrings
                         .Zip(rowToDigitMaps)
                         .Select(MapRowToDigit)
-                        .Aggregate(Digit.All, (accumulator, digit) => accumulator * digit);
+                        .Aggregate(Digit.Any, (accumulator, digit) => accumulator & digit);
                 }
 
                 static int OffsetFromIndex(int index) => index * 3;
@@ -67,9 +67,9 @@ namespace BankOcr.Cli
                 static Digit TopRowToDigit(string topRow) =>
                     topRow switch
                     {
-                        " _ " => Digit.Zero + Digit.Two + Digit.Three + Digit.Five +
-                                Digit.Six + Digit.Seven + Digit.Eight + Digit.Nine,
-                        "   " => Digit.One + Digit.Four,
+                        " _ " => Digit.Zero | Digit.Two | Digit.Three | Digit.Five |
+                                Digit.Six | Digit.Seven | Digit.Eight | Digit.Nine,
+                        "   " => Digit.One | Digit.Four,
                         _ => throw new ArgumentException($"Invalid pattern [{topRow}]", nameof(topRow))
                     };
 
@@ -77,20 +77,20 @@ namespace BankOcr.Cli
                     middleRow switch
                     {
                         "| |" => Digit.Zero,
-                        "  |" => Digit.One + Digit.Seven,
-                        " _|" => Digit.Two + Digit.Three,
-                        "|_|" => Digit.Four + Digit.Eight + Digit.Nine,
-                        "|_ " => Digit.Five + Digit.Six,
+                        "  |" => Digit.One | Digit.Seven,
+                        " _|" => Digit.Two | Digit.Three,
+                        "|_|" => Digit.Four | Digit.Eight | Digit.Nine,
+                        "|_ " => Digit.Five | Digit.Six,
                         _ => throw new ArgumentException($"Invalid pattern [{middleRow}]", nameof(middleRow))
                     };
 
                 static Digit BottomRowToDigit(string bottomRow) =>
                     bottomRow switch
                     {
-                        "|_|" => Digit.Zero + Digit.Six + Digit.Eight,
-                        "  |" => Digit.One + Digit.Four + Digit.Seven,
+                        "|_|" => Digit.Zero | Digit.Six | Digit.Eight,
+                        "  |" => Digit.One | Digit.Four | Digit.Seven,
                         "|_ " => Digit.Two,
-                        " _|" => Digit.Three + Digit.Five + Digit.Nine,
+                        " _|" => Digit.Three | Digit.Five | Digit.Nine,
                         _ => throw new ArgumentException($"Invalid pattern [{bottomRow}]", nameof(bottomRow))
                     };
             }

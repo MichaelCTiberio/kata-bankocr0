@@ -23,9 +23,9 @@ namespace BankOcr.Domain
 
         DigitMask mask { get; init; }
 
-        public static Digit operator +(Digit lhs, Digit rhs) => new Digit { mask = lhs.mask | rhs.mask };
+        public static Digit operator |(Digit lhs, Digit rhs) => new Digit { mask = lhs.mask | rhs.mask };
 
-        public static Digit operator *(Digit lhs, Digit rhs) => new Digit { mask = lhs.mask & rhs.mask };
+        public static Digit operator &(Digit lhs, Digit rhs) => new Digit { mask = lhs.mask & rhs.mask };
 
         public static explicit operator char(Digit digit) =>
             digit.mask switch
@@ -53,7 +53,7 @@ namespace BankOcr.Domain
         public static Digit Seven = new Digit { mask = DigitMask.Seven };
         public static Digit Eight = new Digit { mask = DigitMask.Eight };
         public static Digit Nine = new Digit { mask = DigitMask.Nine }; 
-        public static Digit All = new Digit { mask = DigitMask.All };
+        public static Digit Any = new Digit { mask = DigitMask.All };
     }
 
     public readonly struct Account
